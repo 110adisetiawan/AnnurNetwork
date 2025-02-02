@@ -40,9 +40,16 @@
         });
 
 
+        var Stadia_AlidadeSatellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}', {
+            minZoom: 0
+            , maxZoom: 20
+            , attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            , ext: 'jpg'
+        }).addTo(map);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap'
-        }).addTo(map);
+        });
 
 
 
@@ -66,7 +73,7 @@
 
     L.marker([{{$network->latitude}}, {{ $network->longitude }}], {
         icon: baseLine
-    }).bindPopup('<h6 class="text-nowrap text-heading">Nama Device : {{ $network->nama_device }}</h6></br><h6 class="text-nowrap text-heading">IP Address : {{ $network->ip_address }}</h6></br><h6 class="text-nowrap text-heading">Status Device : @if($network->status == 'active')<span class="badge rounded-pill bg-label-success me-1">Active</span> @elseif($network->status == 'offline')<span class="badge rounded-pill bg-label-danger me-1">Offline</span> @elseif($network->status == 'rusak')<span class="badge rounded-pill bg-label-dark me-1">Rusak</span> @endif</h6></br><a href="{{ route('network.edit', $network->id) }}" class="btn btn-warning">Edit</a>').addTo(map);
+    }).bindPopup('<h6 class="text-nowrap text-heading">Nama Device : {{ $network->nama_device }}</h6></br><h6 class="text-nowrap text-heading">Serial Number : {{ $network->serial_number }}</h6></br><h6 class="text-nowrap text-heading">IP Address : {{ $network->ip_address }}</h6></br><h6 class="text-nowrap text-heading">Status Device : @if($network->status == 'active')<span class="badge rounded-pill bg-label-success me-1">Active</span> @elseif($network->status == 'offline')<span class="badge rounded-pill bg-label-danger me-1">Offline</span> @elseif($network->status == 'rusak')<span class="badge rounded-pill bg-label-dark me-1">Rusak</span> @endif</h6></br><a href="{{ route('network.edit', $network->id) }}" class="btn btn-warning">Edit</a>').addTo(map);
 
     @endforeach
     /* --------------------------- Initialize Markers --------------------------- */
