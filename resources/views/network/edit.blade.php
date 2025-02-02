@@ -1,3 +1,18 @@
+@push('custom-scripts-map')
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    #map {
+        width: 750px;
+        height: 450px;
+    }
+
+</style>
+<link rel='stylesheet' href='https://unpkg.com/leaflet@1.8.0/dist/leaflet.css' crossorigin='' />
+@endpush
+
 @extends('../layout')
 @section('content')
 

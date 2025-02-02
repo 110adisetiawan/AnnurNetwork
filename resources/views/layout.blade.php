@@ -39,18 +39,8 @@
     <script src="{{ asset('assets/js/config.js') }}"></script>
 
     {{-- LeafletJS  --}}
-    <style>
-        .text-center {
-            text-align: center;
-        }
+    @stack('custom-scripts-map')
 
-        #map {
-            width: 750px;
-            height: 400px;
-        }
-
-    </style>
-    <link rel='stylesheet' href='https://unpkg.com/leaflet@1.8.0/dist/leaflet.css' crossorigin='' />
 </head>
 
 <body>
@@ -126,7 +116,7 @@
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-without-navbar.html" class="menu-link">
+                                <a href="{{ route('map.index') }}" class="menu-link">
                                     <div data-i18n="Without navbar">MAP OLT</div>
                                 </a>
                             </li>

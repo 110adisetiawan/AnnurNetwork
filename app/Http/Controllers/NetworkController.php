@@ -12,7 +12,7 @@ class NetworkController extends Controller
      */
     public function index()
     {
-        $networks = Network::all();
+        $networks = Network::all()->sortByDesc('created_at');
         return view('network.index', compact('networks'));
     }
 
