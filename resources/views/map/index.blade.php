@@ -62,7 +62,7 @@
     let baseLine = L.icon({
         iconUrl: '{{ asset("assets/img/base-station-line.png") }}',
 
-        iconSize: [40, 40], // size of the icon
+        iconSize: [40, 80], // size of the icon
         shadowSize: [50, 64], // size of the shadow
         iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
         shadowAnchor: [4, 62], // the same for the shadow
