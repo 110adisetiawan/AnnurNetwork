@@ -8,4 +8,9 @@ class Priority extends Model
 {
     protected $table = 'priorities';
     protected $fillable = ['nama_prioritas'];
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }

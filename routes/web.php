@@ -13,6 +13,7 @@ use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PriorityController;
+use App\Http\Controllers\TicketController;
 
 Route::get('/', function () {
     return view(
@@ -35,3 +36,4 @@ Route::resource('priority', PriorityController::class);
 Route::resource('map', MapController::class);
 Route::resource('barang', BarangController::class);
 Route::resource('sla', SLAController::class);
+Route::resource('ticket', TicketController::class);

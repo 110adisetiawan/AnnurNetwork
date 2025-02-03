@@ -47,11 +47,8 @@
         function waktu() {
             var currentTime = new Date();
             setTimeout("waktu()", 1000);
-            var hours = currentTime.getHours();
-            var minutes = currentTime.getMinutes();
-            var seconds = currentTime.getSeconds();
-            var timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('time').innerHTML = timeString;
+            var time = currentTime.toLocaleTimeString();
+            document.getElementById('time').innerHTML = time;
         }
 
     </script>
@@ -218,8 +215,8 @@
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a href="layouts-without-navbar.html" class="menu-link">
-                                    <div data-i18n="Without navbar">Input Ticket</div>
+                                <a href="{{ route('ticket.index') }}" class="menu-link">
+                                    <div data-i18n="Without navbar">Ticket</div>
                                 </a>
                             </li>
                             <li class="menu-item">

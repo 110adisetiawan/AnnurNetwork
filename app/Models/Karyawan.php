@@ -8,4 +8,9 @@ class Karyawan extends Model
 {
     protected $table = 'karyawans';
     protected $fillable = ['nama', 'alamat', 'no_hp', 'email', 'password', 'foto', 'status'];
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
 }
