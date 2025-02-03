@@ -63,14 +63,6 @@
                                 </form>
                             </div>
                         </div>
-
-                        {{-- <a href="{{ route('karyawan.edit', $k->id) }}" class="btn btn-warning">Edit Data</a>
-                        <a href="{{ route('password.edit', $k->id) }}" class="btn btn-primary">Edit Password</a>
-                        <form action="{{ route('karyawan.destroy', $k->id) }}" method="post" style="display: inline">
-                            @csrf
-                            @method('delete')
-                            <button type="submit" class="btn btn-danger">Hapus</button>
-                        </form> --}}
                     </td>
                 </tr>
                 @endforeach

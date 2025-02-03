@@ -41,9 +41,24 @@
     {{-- LeafletJS  --}}
     @stack('custom-scripts-map')
 
+    <script type="text/javascript">
+        window.setTimeout("waktu()", 1000);
+
+        function waktu() {
+            var currentTime = new Date();
+            setTimeout("waktu()", 1000);
+            var hours = currentTime.getHours();
+            var minutes = currentTime.getMinutes();
+            var seconds = currentTime.getSeconds();
+            var timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('time').innerHTML = timeString;
+        }
+
+    </script>
+
 </head>
 
-<body>
+<body onLoad="waktu()">
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -103,19 +118,19 @@
 
                     <!-- OLT -->
                     <!-- Layouts -->
-                    <li class="menu-item">
+                    <li class="menu-item {{ request()->is('network*','map*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-router-line"></i>
                             <div data-i18n="Layouts">OLT</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
+                            <li class="menu-item {{ request()->is('network*') ? 'active' : '' }}">
                                 <a href="{{ route('network.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Data OLT</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
+                            <li class="menu-item {{ request()->is('map*') ? 'active' : '' }}">
                                 <a href="{{ route('map.index') }}" class="menu-link">
                                     <div data-i18n="Without navbar">MAP OLT</div>
                                 </a>
@@ -125,15 +140,15 @@
 
                     <!-- Barang -->
                     <!-- Layouts -->
-                    <li class="menu-item">
+                    <li class="menu-item {{ request()->is('barang*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-layout-2-line"></i>
                             <div data-i18n="Layouts">Barang</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
+                            <li class="menu-item {{ request()->is('barang*') ? 'active' : '' }}">
+                                <a href="{{ route('barang.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Data Barang & Stok</div>
                                 </a>
                             </li>
@@ -142,15 +157,15 @@
 
                     <!-- SLA -->
                     <!-- Layouts -->
-                    <li class="menu-item">
+                    <li class="menu-item {{ request()->is('sla*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-timer-line"></i>
                             <div data-i18n="Layouts">SLA</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
+                            <li class="menu-item {{ request()->is('sla*') ? 'active' : '' }}">
+                                <a href="{{ route('sla.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Setting SLA</div>
                                 </a>
                             </li>

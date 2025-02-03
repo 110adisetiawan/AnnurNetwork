@@ -7,15 +7,33 @@
 <div class="col-md-12 col-lg-4">
     <div class="card">
         <div class="card-body text-nowrap">
-            <h5 class="card-title mb-0 flex-wrap text-nowrap">Congratulations Norris! 🎉</h5>
-            <p class="mb-2">Best seller of the month</p>
-            <h4 class="text-primary mb-0">$42.8k</h4>
-            <p class="mb-2">78% of target 🚀</p>
-            <a href="javascript:;" class="btn btn-sm btn-primary">View Sales</a>
+            <h5 class="card-title mb-0 flex-wrap text-nowrap">Selamat <label id="greeting"></label> Adi!</h5>
+            <p class="mb-2">Selamat datang di sistem</p>
+            <h1 class="text-primary mb-0"><label class="mb-10 mt-3" id="time"></label></h1>
+            <p class="small mb-0"><span class="h6 mb-0" id="date">{{ $now }}</span></p>
         </div>
-        <img src="../assets/img/illustrations/trophy.png" class="position-absolute bottom-0 end-0 me-5 mb-5" width="83" alt="view sales" />
+        <img src="{{ asset('assets/img/illustrations/tree.png') }}" class="position-absolute bottom-0 end-0 me-3 mb-1" style="" width="80" alt="view sales" />
     </div>
 </div>
+<script>
+    var myDate = new Date();
+    var hrs = myDate.getHours();
+    var mins = myDate.getMinutes();
+    var greet;
+
+    if (hrs >= 5 && ((hrs == 5 && mins >= 30) || (hrs > 5 && hrs < 12)))
+        greet = 'Pagi';
+    else if (hrs >= 12 && hrs < 18)
+        greet = 'Sore';
+    else if ((hrs >= 18 && hrs < 24) || hrs > 0)
+        greet = 'Malam';
+    else
+        greet = 'Error';
+
+    document.getElementById('greeting').innerHTML =
+        '<b>' + greet;
+
+</script>
 <!--/ Congratulations card -->
 
 <!-- Transactions -->
@@ -23,7 +41,7 @@
     <div class="card h-100">
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
-                <h5 class="card-title m-0 me-2">Transactions</h5>
+                <h5 class="card-title m-0 me-2">Data Master</h5>
                 <div class="dropdown">
                     <button class="btn text-muted p-0" type="button" id="transactionID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="ri-more-2-line ri-24px"></i>
@@ -47,8 +65,8 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <p class="mb-0">Sales</p>
-                            <h5 class="mb-0">245k</h5>
+                            <p class="mb-0">Karyawan</p>
+                            <h5 class="mb-0">{{ $karyawan }}</h5>
                         </div>
                     </div>
                 </div>
@@ -60,8 +78,8 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <p class="mb-0">Customers</p>
-                            <h5 class="mb-0">12.5k</h5>
+                            <p class="mb-0">Barang</p>
+                            <h5 class="mb-0">{{ $barang }}</h5>
                         </div>
                     </div>
                 </div>
@@ -73,8 +91,8 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <p class="mb-0">Product</p>
-                            <h5 class="mb-0">1.54k</h5>
+                            <p class="mb-0">OLT</p>
+                            <h5 class="mb-0">{{ $olt }}</h5>
                         </div>
                     </div>
                 </div>
@@ -86,8 +104,8 @@
                             </div>
                         </div>
                         <div class="ms-3">
-                            <p class="mb-0">Revenue</p>
-                            <h5 class="mb-0">$88k</h5>
+                            <p class="mb-0">Ticket</p>
+                            <h5 class="mb-0">1</h5>
                         </div>
                     </div>
                 </div>
@@ -102,17 +120,8 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <h5 class="mb-1">Weekly Overview</h5>
-                <div class="dropdown">
-                    <button class="btn text-muted p-0" type="button" id="weeklyOverviewDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="ri-more-2-line ri-24px"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="weeklyOverviewDropdown">
-                        <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        <a class="dropdown-item" href="javascript:void(0);">Update</a>
-                    </div>
-                </div>
+                <h5 class="mb-1">Tiket Onprogres</h5>
+
             </div>
         </div>
         <div class="card-body pt-lg-2">

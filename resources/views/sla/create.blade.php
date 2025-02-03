@@ -2,11 +2,10 @@
 @section('content')
 <div class="col-md-6">
     <div class="card">
-        <h1 class="card-header">Edit Tugas</h1>
+        <h1 class="card-header">Tambah Tugas</h1>
         <div class="card-body">
-            <form action=" {{ route('task.update',$task->id) }}" method="post">
+            <form action=" {{ route('sla.store') }}" method="post">
                 @csrf
-                @method('put')
                 @error('nama_sla')
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
