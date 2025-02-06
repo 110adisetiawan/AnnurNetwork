@@ -2,7 +2,7 @@
 @section('content')
 <div class="col-md-6">
     <div class="card">
-        <h1 class="card-header">Tambah Tugas</h1>
+        <h1 class="card-header">Tambah SLA</h1>
         <div class="card-body">
             <form action=" {{ route('sla.store') }}" method="post">
                 @csrf
@@ -13,7 +13,7 @@
                     <input type="text" class="form-control" id="basic-default-fullname" placeholder="Masukkan nama SLA" name="nama_sla" value="{{ old('nama_sla') }}">
                     <label for="basic-default-fullname">Nama SLA</label>
                 </div>
-                @error('deskripsi')
+                @error('description')
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
                 <div class="form-floating form-floating-outline mb-6">
@@ -23,9 +23,9 @@
                 @error('time')
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
-                <div class="form-floating form-floating-outline mb-6">
-                    <input type="time" class="form-control" id="basic-default-fullname" placeholder="02:00 AM" name="time" value="{{ old('time') }}">
-                    <label for="basic-default-fullname">Waktu</label>
+                <div class="input-group mb-6">
+                    <input type="number" class="form-control" id="12" placeholder="Masukkan Jam" aria-label="Masukkan Jam" aria-describedby="basic-addon43" name="time" value="{{ old('time') }}">
+                    <span class="input-group-text" id="basic-addon43">Jam</span>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan</button>

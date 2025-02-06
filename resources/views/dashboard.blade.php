@@ -2,6 +2,19 @@
 
 @section('content')
 
+@push('waktuOnload')
+<script type="text/javascript">
+    window.setTimeout("waktu()", 1000);
+
+    function waktu() {
+        var currentTime = new Date();
+        setTimeout("waktu()", 1000);
+        var time = currentTime.toLocaleTimeString();
+        document.getElementById('time').innerHTML = time;
+    }
+
+</script>
+@endpush
 
 <!-- Congratulations card -->
 <div class="col-md-12 col-lg-4">
@@ -105,7 +118,7 @@
                         </div>
                         <div class="ms-3">
                             <p class="mb-0">Ticket</p>
-                            <h5 class="mb-0">1</h5>
+                            <h5 class="mb-0">{{ $ticket }}</h5>
                         </div>
                     </div>
                 </div>

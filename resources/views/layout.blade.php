@@ -41,21 +41,12 @@
     {{-- LeafletJS  --}}
     @stack('custom-scripts-map')
 
-    <script type="text/javascript">
-        window.setTimeout("waktu()", 1000);
+    @stack('waktuOnload')
 
-        function waktu() {
-            var currentTime = new Date();
-            setTimeout("waktu()", 1000);
-            var time = currentTime.toLocaleTimeString();
-            document.getElementById('time').innerHTML = time;
-        }
-
-    </script>
 
 </head>
 
-<body onLoad="waktu()">
+<body {{ request()->is('/') ? 'onLoad="waktu()"' : '' }}>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
@@ -202,7 +193,7 @@
 
                     <!-- Karyawan -->
                     <!-- Layouts -->
-                    <li class="menu-item">
+                    <li class="menu-item {{ request()->is('ticket*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-id-card-line"></i>
                             <div data-i18n="Layouts">Karyawan</div>
@@ -214,7 +205,7 @@
                                     <div data-i18n="Without menu">Absensi</div>
                                 </a>
                             </li>
-                            <li class="menu-item">
+                            <li class="menu-item {{ request()->is('ticket*') ? 'active' : '' }}">
                                 <a href="{{ route('ticket.index') }}" class="menu-link">
                                     <div data-i18n="Without navbar">Ticket</div>
                                 </a>

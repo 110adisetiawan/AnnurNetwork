@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\Ticket;
 use App\Models\Karyawan;
 use App\Models\Priority;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
@@ -90,7 +91,8 @@ class TicketController extends Controller
      */
     public function edit(Ticket $ticket)
     {
-        return view('ticket.edit', compact('ticket'));
+        $karyawans = Karyawan::all();
+        return view('ticket.edit', compact('ticket', 'karyawans'));
     }
 
     /**
@@ -98,13 +100,61 @@ class TicketController extends Controller
      */
     public function update(Request $request, Ticket $ticket)
     {
-        $request->validate([
-            'status' => 'required',
-        ]);
+        if ($request->only('karyawan_id')) {
+            $update = Ticket::find($ticket->id);
+            $update->karyawan_id = $request->karyawan_id;
+            $update->save();
+            return redirect()->route('ticket.edit', $ticket->id)->with('success', 'Teknisi berhasil diubah.');
+        }
+        if ($request->only('status')) {
+            if ($request->status == 'onprogress') {
+                $carbon = Carbon::now();
+                $time = $carbon->now();
+                $update = Ticket::find($ticket->id);
+                $update->status = $request->status;
+                $update->start_date = $time;
+                $update->save();
+                return redirect()->route('ticket.index')->with('success', 'Ticket updated successfully.');
+            }
+        } else if ($request->has('close_ticket')) {
+            $request->validate([
+                'image_task' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'latitude_task' => 'required',
+                'longitude_task' => 'required'
+            ], [
+                'image_task.image' => 'File harus berupa gambar!',
+                'image_task.mimes' => 'File harus berupa gambar dengan format jpeg, png, jpg, gif!',
+                'image_task.max' => 'Ukuran file tidak boleh lebih dari 2MB!'
+            ]);
 
-        $ticket->update($request->all());
-        return redirect()->route('ticket.index')->with('success', 'Ticket updated successfully.');
+            $update = Ticket::find($ticket->id);
+            $carbon = Carbon::now();
+            $time = $carbon->now();
+
+            $filepath = public_path('assets/img/ticket_task');
+
+            if ($request->hasFile('image_task')) {
+                $file = $request->file('image_task');
+                $filename = $update->karyawan->nama . '.' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move($filepath, $filename);
+                $update->image_task = $filename;
+            }
+
+            $update->status = $request->status;
+            $update->latitude_task = $request->latitude_task;
+            $update->longitude_task = $request->longitude_task;
+            $update->closed_by = $update->karyawan->nama;
+            $update->end_date = $time;
+            $update->note = $request->note;
+            $update->status = 'closed';
+            $update->save();
+            return redirect()->route('ticket.index')->with('success', 'Ticket close successfully.');
+        } else {
+            $ticket->update($request->all());
+            return redirect()->route('ticket.index')->with('success', 'Ticket updated successfully.');
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.

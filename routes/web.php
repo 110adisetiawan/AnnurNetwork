@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use App\Models\Barang;
+use App\Models\Ticket;
 use App\Models\Network;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\Route;
@@ -9,16 +10,19 @@ use App\Http\Controllers\MapController;
 use App\Http\Controllers\SLAController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PriorityController;
-use App\Http\Controllers\TicketController;
+
+
 
 Route::get('/', function () {
     return view(
         'dashboard',
         [
+            'ticket' => Ticket::all()->count(),
             'karyawan' => Karyawan::all()->count(),
             'barang' => Barang::all()->count(),
             'olt' => Network::all()->count(),

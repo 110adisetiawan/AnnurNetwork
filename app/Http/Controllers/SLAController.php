@@ -32,7 +32,7 @@ class SLAController extends Controller
         $request->validate([
             'nama_sla' => 'required',
             'description' => 'required',
-            'time' => 'required',
+            'time' => 'required|regex:/^[0-9]+$/',
         ]);
 
         SLA::create($request->all());

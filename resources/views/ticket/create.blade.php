@@ -1,3 +1,17 @@
+@push('custom-scripts-map')
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    #map {
+        width: auto;
+        height: 400px;
+    }
+
+</style>
+<link rel='stylesheet' href='https://unpkg.com/leaflet@1.8.0/dist/leaflet.css' crossorigin='' />
+@endpush
 @extends('../layout')
 @section('content')
 <div class="col-md-6">
@@ -75,32 +89,89 @@
                     <label for="formFile" class="form-label">Upload Foto Lokasi</label>
                     <input class="form-control" type="file" id="formFile" name="image_address">
                 </div>
-                @error('latitude_ticket')
-                <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
-                <div class="form-floating form-floating-outline mb-6">
-                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="" name="latitude_ticket" value="{{ old('latitude_ticket') }}">
-                    <label for="basic-default-fullname">Latitude Customer</label>
-                </div>
-                @error('longitude_ticket')
-                <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
-                <div class="form-floating form-floating-outline mb-6">
-                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="" name="longitude_ticket" value="{{ old('longitude_ticket') }}">
-                    <label for="basic-default-fullname">Longitude Customer</label>
-                </div>
 
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
         </div>
     </div>
 </div>
 <div class="col-md-6">
     <div class="card">
-        <h1 class="card-header">Tambah Tugas</h1>
+        <h1 class="card-header"></h1>
         <div class="card-body">
+            @error('latitude_ticket')
+            <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+            <div class="form-floating form-floating-outline mb-6">
+                <input type="text" class="form-control" id="latitude_ticket" placeholder="-9 7872988" name="latitude_ticket">
+                <label for="basic-default-fullname">Latitude Customer</label>
+            </div>
+            @error('longitude_ticket')
+            <div class="alert alert-danger">{{ $message }}</div>
+            @enderror
+            <div class="form-floating form-floating-outline mb-6">
+                <input type="text" class="form-control" id="longitude_ticket" placeholder="-7 9828761" name="longitude_ticket">
+                <label for="basic-default-fullname">Longitude Customer</label>
+            </div>
+            <div class="mb-6">
+                <small class="text-light fw-medium">Maps</small>
+                <div class="defaultFormControlInput mt-4">
+                    <div id='map'></div>
+                </div>
+            </div>
 
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </div>
+    </form>
 </div>
+
+{{-- LeafletJS  --}}
+<script src='https://unpkg.com/leaflet@1.8.0/dist/leaflet.js' crossorigin=''></script>
+<script>
+    let map, marker;
+    /* ----------------------------- Initialize Map ----------------------------- */
+    function initMap() {
+        map = L.map('map', {
+            center: {
+                lat: -7.302458165537493
+                , lng: 112.67739816342004
+            , }
+            , zoom: 14
+        });
+
+
+        var Stadia_AlidadeSatellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.{ext}', {
+            minZoom: 0
+            , maxZoom: 20
+            , attribution: '&copy; CNES, Distribution Airbus DS, © Airbus DS, © PlanetObserver (Contains Copernicus Data) | &copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            , ext: 'jpg'
+        });
+
+        var openstreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+    }
+    initMap();
+
+    let baseLine = L.icon({
+        iconUrl: '{{ asset("assets/img/base-station-line.png") }}',
+
+        iconSize: [40, 40], // size of the icon
+        shadowSize: [50, 64], // size of the shadow
+        iconAnchor: [22, 94], // point of the icon which will correspond to marker's location
+        shadowAnchor: [4, 62], // the same for the shadow
+        popupAnchor: [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+
+    map.on('click', function(e) {
+        if (marker != null) {
+            map.removeLayer(marker);
+        }
+        marker = new L.marker(e.latlng).bindPopup('Hi There! lat').addTo(map);
+        document.getElementById('latitude_ticket').value = e.latlng.lat;
+        document.getElementById('longitude_ticket').value = e.latlng.lng;
+    });
+    /* --------------------------- Initialize Markers --------------------------- */
+
+</script>
 @endsection

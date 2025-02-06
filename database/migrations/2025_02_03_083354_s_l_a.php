@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_sla');
             $table->string('description');
-            $table->time('time');
+            $table->string('time');
             $table->timestamps();
         });
     }
