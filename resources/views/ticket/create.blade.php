@@ -20,14 +20,15 @@
         <div class="card-body">
             <form action=" {{ route('ticket.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
-                @error('karyawan_id')
+                @error('user_id')
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
                 <div class="form-floating form-floating-outline mb-6">
-                    <select id="country" class="select2 form-select" name="karyawan_id">
+                    <select id="country" class="select2 form-select" name="user_id">
                         <option value="">Pilih Karyawan</option>
                         @foreach ($karyawans as $karyawan)
-                        <option value="{{ $karyawan->id }}">{{ $karyawan->nama }}</option>
+                        @if($karyawan->hasRole('Administrator')) @continue @endif
+                        <option value="{{ $karyawan->id }}">{{ $karyawan->name }}</option>
                         @endforeach
                     </select>
                     <label for="country">Nama Karyawan</label>

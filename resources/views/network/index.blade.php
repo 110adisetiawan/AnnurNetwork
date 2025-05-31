@@ -3,7 +3,9 @@
 @section('content')
 <div class="container">
     <h1>Data OLT</h1>
+    @can('data create')
     <a href="{{ route('network.create') }}" class="btn btn-primary mb-5">Tambah Device</a>
+    @endcan
     @if(session('success'))
     <div class="alert alert-success" role="alert">{{ session('success') }}</div>
     @endif
@@ -18,7 +20,9 @@
                     <th>Status</th>
                     <th>Latitude</th>
                     <th>Longitude</th>
+                    @can('data edit')
                     <th width=20%>Aksi</th>
+                    @endcan
                 </tr>
             </thead>
             <tbody>
@@ -44,14 +48,18 @@
                     @endif
                     <td>{{ $k->latitude }}</td>
                     <td>{{ $k->longitude }}</td>
+                    @can('data edit')
                     <td>
                         <a href="{{ route('network.edit', $k->id) }}" class="btn btn-warning">Edit</a>
+                        @can('data delete')
                         <form action="{{ route('network.destroy', $k->id) }}" method="post" style="display: inline">
                             @csrf
                             @method('delete')
                             <button type="submit" class="btn btn-danger">Hapus</button>
                         </form>
+                        @endcan
                     </td>
+                    @endcan
                 </tr>
                 @endforeach
             </tbody>

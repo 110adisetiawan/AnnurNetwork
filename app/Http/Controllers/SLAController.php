@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class SLAController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-create|data-delete']);
+    }
     /**
      * Display a listing of the resource.
      */

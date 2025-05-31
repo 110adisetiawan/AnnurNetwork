@@ -38,7 +38,7 @@
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
                 <div class="form-floating form-floating-outline mb-6">
-                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="" name="" value="{{ $ticket->karyawan->nama }}" readonly>
+                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="" name="" value="{{ $ticket->user->name }}" readonly>
                     <label for="basic-default-fullname">Teknisi</label>
                 </div>
                 @if($ticket->status != 'closed')
@@ -150,8 +150,8 @@
                                 <form action="{{ route('ticket.update', $ticket->id) }}" method="post" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
-                                    <select id="country" class="select2 form-select" name="karyawan_id">
-                                        <option value="">Pilih Karyawan</option>
+                                    <select id="country" class="select2 form-select" name="user_id">
+                                        <option value="{{ $ticket->user->id }}">{{ $ticket->user->name }}</option>
                                         @foreach ($karyawans as $karyawan)
                                         <option value="{{ $karyawan->id }}">{{ $karyawan->nama }}</option>
                                         @endforeach

@@ -48,9 +48,43 @@
                     <input type="password" class="form-control" id="basic-default-fullname" placeholder="" name="password">
                     <label for="basic-default-fullname">Password</label>
                 </div>
+                <select class="select2 form-select" name="role">
+                    <option value="">Pilih Role User</option>
+                    @foreach ($roles as $role)
+                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                    @endforeach
+                </select>
 
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary mt-6">Simpan</button>
             </form>
         </div>
     </div>
-    @endsection
+</div>
+<div class="col-md-6">
+    <div class="card">
+        <h1 class="card-header">Preview Foto</h1>
+        <div class="card-body text-center">
+            <img class="d-block mx-auto w-full h-100 rounded" id="preview-image" src="{{ url('/') }}/assets/img/karyawan/null.png" alt="Preview Foto" class="img-fluid" style="max-height: 300px; display: none;">
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('formFile').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        const previewImage = document.getElementById('preview-image');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImage.src = '#';
+            previewImage.style.display = 'none';
+        }
+    });
+
+</script>
+@endsection

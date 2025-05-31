@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-create|data-delete']);
+    }
     /**
      * Display a listing of the resource.
      */

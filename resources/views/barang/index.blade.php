@@ -3,7 +3,9 @@
 @section('content')
 <div class="container">
     <h1>Data Barang</h1>
+    @can('data-create')
     <a href="{{ route('barang.create') }}" class="btn btn-primary mb-5">Tambah Barang</a>
+    @endcan
     @if(session('success'))
     <div class="alert alert-success" role="alert">{{ session('success') }}</div>
     @endif
@@ -16,7 +18,9 @@
                     <th>Kode Barang</th>
                     <th>Harga</th>
                     <th>Stok</th>
+                    @can('data-master')
                     <th>Action</th>
+                    @endcan
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +37,7 @@
                     <td>@currency($k->harga)</td>
                     <td>{{ $k->stok }}</td>
                     <td>
+                        @can('data-master')
                         <div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="ri-more-2-line"></i>
@@ -46,6 +51,7 @@
                                 </form>
                             </div>
                         </div>
+                        @endcan
                     </td>
                 </tr>
                 @endforeach

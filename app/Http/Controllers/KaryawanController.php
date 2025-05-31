@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Karyawan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
+
 
 class KaryawanController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-create|data-delete']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $karyawans = Karyawan::all();
+        $karyawans = User::all();
         return view('karyawan.index', compact('karyawans'));
     }
 
@@ -23,7 +30,8 @@ class KaryawanController extends Controller
      */
     public function create()
     {
-        return view('karyawan.create');
+        $roles = Role::all();
+        return view('karyawan.create', compact('roles'));
     }
 
     /**
@@ -45,8 +53,8 @@ class KaryawanController extends Controller
         ]);
         $filepath = public_path('assets/img/karyawan');
 
-        $insert = new Karyawan();
-        $insert->nama = $request->nama;
+        $insert = new User();
+        $insert->name = $request->nama;
         $insert->alamat = $request->alamat;
         $insert->no_hp = $request->no_hp;
         $insert->email = $request->email;
@@ -59,34 +67,37 @@ class KaryawanController extends Controller
             $insert->foto = $filename;
         }
 
+        $insert->syncRoles(intval($request->role));
         $result = $insert->save();
+
         return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Karyawan $karyawan) {}
+    public function show(User $karyawan) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Karyawan $karyawan)
+    public function edit(User $karyawan)
     {
-        return view('karyawan.edit', compact('karyawan'));
+        $roles = Role::all();
+        return view('karyawan.edit', compact('karyawan', 'roles'));
     }
 
     public function editPassword(string $id)
     {
 
-        $karyawan = Karyawan::find($id);
+        $karyawan = User::find($id);
         return view('karyawan.editPassword', compact('karyawan'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Karyawan $karyawan)
+    public function update(Request $request, User $karyawan)
     {
         $request->validate([
             'nama' => 'required',
@@ -95,6 +106,7 @@ class KaryawanController extends Controller
             'email' => 'required|email|unique:karyawans,email,' . $karyawan->id,
             'foto' => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
             'status' => 'required',
+            'role' => 'required'
         ], [
             'foto.image' => 'File harus berupa gambar!',
             'foto.mimes' => 'File harus berupa gambar dengan format jpeg, png, jpg, gif!',
@@ -102,8 +114,8 @@ class KaryawanController extends Controller
         ]);
         $filepath = public_path('assets/img/karyawan');
 
-        $update = Karyawan::find($karyawan->id);
-        $update->nama = $request->nama;
+        $update = User::find($karyawan->id);
+        $update->name = $request->nama;
         $update->alamat = $request->alamat;
         $update->no_hp = $request->no_hp;
         $update->email = $request->email;
@@ -122,7 +134,7 @@ class KaryawanController extends Controller
             }
             $update->foto = $filename;
         }
-
+        $update->syncRoles($request->role);
         $result = $update->save();
         return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil diupdate');
     }
@@ -130,7 +142,7 @@ class KaryawanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Karyawan $karyawan)
+    public function destroy(User $karyawan)
     {
         $karyawan->delete();
         if (!is_null($karyawan->foto)) {

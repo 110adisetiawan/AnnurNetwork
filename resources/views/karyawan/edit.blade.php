@@ -46,7 +46,7 @@
                 <div class="row mt-1 g-5">
                     <div class="col-md-6">
                         <div class="form-floating form-floating-outline">
-                            <input class="form-control" type="text" id="firstName" name="nama" value="{{ $karyawan->nama }}" autofocus="">
+                            <input class="form-control" type="text" id="firstName" name="nama" value="{{ $karyawan->name }}" autofocus="">
                             <label for="firstName">Name Lengkap</label>
                         </div>
                     </div>
@@ -84,7 +84,19 @@
                             <label for="country">Status</label>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-floating form-floating-outline">
+                            <select class="select2 form-select" name="role">
+                                <option value="">Pilih Role User</option>
+                                @foreach ($roles as $role)
+                                <option value="{{ $role->name }}" {{ $karyawan->hasRole($role->name) ? "selected" : "" }}>{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                            <label for="country">Role User</label>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="mt-6">
                     <button type="submit" class="btn btn-primary me-3 waves-effect waves-light">Save changes</button>
                 </div>

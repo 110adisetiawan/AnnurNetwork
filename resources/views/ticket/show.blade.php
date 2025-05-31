@@ -23,7 +23,7 @@
                 <label for="basic-default-fullname">Alamat Customer</label>
             </div>
             <div class="form-floating form-floating-outline mb-6">
-                <input type="text" class="form-control" id="basic-default-fullname" placeholder="Jl.xx xx" name="customer_address" value="{{ $ticket->karyawan->nama }}" readonly>
+                <input type="text" class="form-control" id="basic-default-fullname" placeholder="Jl.xx xx" name="customer_address" value="{{ $ticket->user->name }}" readonly>
                 <label for="basic-default-fullname">Teknisi</label>
             </div>
             <div class="mb-6">
@@ -82,8 +82,8 @@
                 <label for="basic-default-fullname">Start Date</label>
             </div>
             <div class="form-floating form-floating-outline mb-6">
-                <input type="text" class="form-control {{ ($slaDiffHari >= 1 || $slaDiffJam >= $ticket->sla->time) ? 'bg-danger' : '' }} " id="basic-default-fullname" placeholder="" value="{{ $ticket->end_date }}" readonly>
-                <label for="basic-default-fullname">End Date</label>
+                <input type="text" class="form-control {{ ($slaDiffHari >= 1 || $slaDiffJam >= $ticket->sla->time) ? 'border border-danger text-danger' : 'border border-success text-success' }} " id="basic-default-fullname" placeholder="" value="{{ $ticket->end_date }}" readonly>
+                <label for="basic-default-fullname" class="{{ ($slaDiffHari >= 1 || $slaDiffJam >= $ticket->sla->time) ? 'text-danger' : 'text-success' }}">End Date</label>
             </div>
             <div class="form-floating form-floating-outline mb-6">
                 <input type="text" class="form-control" id="basic-default-fullname" placeholder="" value="{{ $ticket->sla->nama_sla }}" readonly>

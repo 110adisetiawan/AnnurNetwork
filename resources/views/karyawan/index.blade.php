@@ -15,7 +15,7 @@
                     <th>Nama</th>
                     <th>Alamat</th>
                     <th>No. Telepon</th>
-                    <th>Email</th>
+                    <th>Role</th>
                     <th>Foto</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -30,10 +30,14 @@
                 @foreach ($karyawans as $k)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $k->nama }}</td>
+                    <td>{{ $k->name }}</td>
                     <td>{{ $k->alamat }}</td>
                     <td>{{ $k->no_hp }}</td>
-                    <td>{{ $k->email }}</td>
+                    <td>
+                        @foreach ($k->getRoleNames() as $role)
+                        <button class="btn btn-success">{{ $role }}</button>
+                        @endforeach
+                    </td>
                     <td>@if (is_null($k->foto))
                         <img src="{{ asset('assets/img/karyawan/null.png') }}" alt="user-avatar" class="d-block w-px-100 h-px-100 rounded" id="uploadedAvatar">
                         @else
@@ -44,8 +48,6 @@
                         <span class="badge rounded-pill bg-label-success me-1">Active</span>
                         @elseif($k->status == 'cuti' || $k->status == 'sakit')
                         <span class="badge rounded-pill bg-label-warning me-1">{{ $k->status }}</span>
-                        {{-- @elseif($k->status == 'sakit')
-                        <span class="badge rounded-pill me-1">{{ $k->status }}</span> --}}
                         @endif
                     </td>
                     <td>

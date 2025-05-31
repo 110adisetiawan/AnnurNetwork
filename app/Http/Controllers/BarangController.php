@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BarangController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-edit']);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -21,7 +27,10 @@ class BarangController extends Controller
      */
     public function create()
     {
-        return view('barang.create');
+        if (Auth::user()->hasPermissionTo('data-master')) {
+            return view('barang.create');
+        }
+        abort(403, 'Anda tidak punya akses ke halaman ini.');
     }
 
     /**
@@ -60,7 +69,10 @@ class BarangController extends Controller
      */
     public function destroy(Barang $barang)
     {
-        $barang->delete();
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus');
+        if (Auth::user()->hasPermissionTo('data-master')) {
+            $barang->delete();
+            return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus');
+        }
+        abort(403, 'Anda tidak punya akses ke halaman ini.');
     }
 }

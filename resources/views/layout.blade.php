@@ -30,13 +30,20 @@
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 
-    <!-- Page CSS -->
+    <!-- Datatable -->
+    {{-- <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />  --}}
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.jqueryui.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.4/css/responsive.jqueryui.css" />
+
 
     <!-- Helpers -->
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('assets/js/config.js') }}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
     {{-- LeafletJS  --}}
     @stack('custom-scripts-map')
@@ -73,7 +80,7 @@
                             <div data-i18n="Dashboards">Dashboards</div>
                         </a>
                     </li>
-
+                    @can('data-master')
                     <li class="menu-header mt-7">
                         <span class="menu-header-text">Data Master</span>
                     </li>
@@ -103,6 +110,7 @@
                             </li>
                         </ul>
                     </li>
+                    @endcan
 
                     <!-- OLT -->
                     <!-- Layouts -->
@@ -144,6 +152,7 @@
                     </li>
 
                     <!-- SLA -->
+                    @can('data-master')
                     <!-- Layouts -->
                     <li class="menu-item {{ request()->is('sla*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -159,6 +168,8 @@
                             </li>
                         </ul>
                     </li>
+                    @endcan
+                    {{-- END OF DATA MASTER  --}}
 
                     <li class="menu-header mt-7">
                         <span class="menu-header-text">Managemen</span>
@@ -191,6 +202,8 @@
                         </ul>
                     </li>
 
+
+
                     <!-- Karyawan -->
                     <!-- Layouts -->
                     <li class="menu-item {{ request()->is('ticket*') ? 'active open' : '' }}">
@@ -217,8 +230,9 @@
                             </li>
                         </ul>
                     </li>
+                    @can('data-master')
                     <li class="menu-item">
-                        <a href="/" class="menu-link">
+                        <a href="/role" class="menu-link">
                             <i class="menu-icon tf-icons ri-git-repository-private-line"></i>
                             <div data-i18n="Layouts">Hak Akses</div>
                         </a>
@@ -233,7 +247,6 @@
                     <li class="menu-header mt-7">
                         <span class="menu-header-text">Laporan</span>
                     </li>
-
                     <!-- Karyawan -->
                     <!-- Layouts -->
                     <li class="menu-item">
@@ -260,6 +273,7 @@
                             </li>
                         </ul>
                     </li>
+                    @endcan
 
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -295,7 +309,7 @@
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
                             <!-- Place this tag where you want the button to render. -->
                             <li class="nav-item lh-1 me-4">
-                                <span><b>Hi</b>, Adi</span>
+                                <span><b>Hi</b>, {{ Auth::user()->name }}</span>
                             </li>
 
                             <!-- User -->
@@ -399,12 +413,25 @@
 
         <!-- endbuild -->
 
-        <!-- Vendors JS -->
+        <!-- Script Waktu -->
+        @stack('scripts')
 
         <!-- Main JS -->
         <script src="{{ asset('assets/js/main.js') }}"></script>
 
-        <!-- Page JS -->
+        <!-- Datatable JS -->
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script src="https://cdn.datatables.net/2.3.1/js/dataTables.js"></script>
+        <script src="https://cdn.datatables.net/2.3.1/js/dataTables.jqueryui.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.js"></script>
+        <script src="https://cdn.datatables.net/responsive/3.0.4/js/responsive.jqueryui.js"></script>
+        <script>
+            new DataTable('#myTable', {
+                responsive: true
+            });
+
+        </script>
 
         <!-- Place this tag before closing body tag for github widget button. -->
         <script async defer src="https://buttons.github.io/buttons.js"></script>

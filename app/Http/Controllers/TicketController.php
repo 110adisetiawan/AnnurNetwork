@@ -2,21 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\SLA;
 use App\Models\Task;
+use App\Models\User;
 use App\Models\Ticket;
-use App\Models\Karyawan;
 use App\Models\Priority;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 
 class TicketController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-view']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+
+        if (Auth::user()->hasRole('Karyawan')) {
+            $userId = Auth::user()->id;
+            $tickets = Ticket::where('user_id', $userId)->get();
+            return view('ticket.index', compact('tickets'));
+        }
+
         $tickets = Ticket::all()->sortByDesc('created_at');
         return view('ticket.index', compact('tickets'));
     }
@@ -26,11 +42,15 @@ class TicketController extends Controller
      */
     public function create()
     {
-        $karyawans = Karyawan::all();
-        $priorities = Priority::all();
-        $sla = SLA::all();
-        $tasks = Task::all();
-        return view('ticket.create', compact('karyawans', 'priorities', 'sla', 'tasks'));
+        if (Auth::user()->hasPermissionTo('data-master')) {
+            $karyawans = User::all();
+            $priorities = Priority::all();
+            $sla = SLA::all();
+            $tasks = Task::all();
+            return view('ticket.create', compact('karyawans', 'priorities', 'sla', 'tasks'));
+        }
+
+        abort(403, 'Anda tidak punya akses ke halaman ini.');
     }
 
     /**
@@ -39,7 +59,7 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'karyawan_id' => 'required',
+            'user_id' => 'required',
             'sla_id' => 'required',
             'priority_id' => 'required',
             'task_id' => 'required',
@@ -57,7 +77,7 @@ class TicketController extends Controller
         $filepath = public_path('assets/img/customer');
 
         $insert = new Ticket();
-        $insert->karyawan_id = $request->karyawan_id;
+        $insert->user_id = $request->user_id;
         $insert->sla_id = $request->sla_id;
         $insert->priority_id = $request->priority_id;
         $insert->task_id = $request->task_id;
@@ -91,7 +111,7 @@ class TicketController extends Controller
      */
     public function edit(Ticket $ticket)
     {
-        $karyawans = Karyawan::all();
+        $karyawans = User::all();
         return view('ticket.edit', compact('ticket', 'karyawans'));
     }
 
@@ -100,9 +120,16 @@ class TicketController extends Controller
      */
     public function update(Request $request, Ticket $ticket)
     {
-        if ($request->only('karyawan_id')) {
+        if ($request->only('user_id')) {
+
+            $request->validate([
+                'user_id' => 'required'
+            ], [
+                'user_id.required' => 'Teknisi harus dipilih!'
+            ]);
+
             $update = Ticket::find($ticket->id);
-            $update->karyawan_id = $request->karyawan_id;
+            $update->user_id = $request->user_id;
             $update->save();
             return redirect()->route('ticket.edit', $ticket->id)->with('success', 'Teknisi berhasil diubah.');
         }

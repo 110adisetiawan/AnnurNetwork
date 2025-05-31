@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Network;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NetworkController extends Controller
 {
+    public function __construct()
+    {
+
+        $this->middleware(['role_or_permission:data-edit']);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -21,6 +27,9 @@ class NetworkController extends Controller
      */
     public function create()
     {
+        if ($this->middleware(['role_or_permission:data-create'])) {
+            abort(403, 'Anda tidak punya akses ke halaman ini.');
+        }
         return view('network.create');
     }
 
@@ -63,6 +72,9 @@ class NetworkController extends Controller
      */
     public function destroy(Network $network)
     {
+        if ($this->middleware(['role_or_permission:data-delete'])) {
+            abort(403, 'Anda tidak punya akses ke halaman ini.');
+        }
         $network->delete();
         return redirect()->route('network.index')->with('success', 'Data device berhasil dihapus');
     }
