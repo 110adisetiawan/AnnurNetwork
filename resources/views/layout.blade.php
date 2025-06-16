@@ -110,6 +110,32 @@
                             </li>
                         </ul>
                     </li>
+                    <!-- Barang Master -->
+                    <!-- Layouts -->
+                    <li class="menu-item  {{ request()->is('product*','category*','supplier*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ri-id-card-line"></i>
+                            <div data-i18n="Layouts">Barang</div>
+                        </a>
+
+                        <ul class="menu-sub">
+                            <li class="menu-item {{ request()->is('product*') ? 'active' : '' }}">
+                                <a href="{{ route('products.index') }}" class="menu-link">
+                                    <div>Data Barang</div>
+                                </a>
+                            </li>
+                            <li class="menu-item menu-item {{ request()->is('category*') ? 'active' : '' }}">
+                                <a href="{{ route('product_categories.index') }}" class="menu-link">
+                                    <div data-i18n="Without navbar">Kategori Barang</div>
+                                </a>
+                            </li>
+                            <li class="menu-item {{ request()->is('supplier*') ? 'active' : '' }}">
+                                <a href="{{ route('product_suppliers.index') }}" class="menu-link">
+                                    <div data-i18n="Container">Supplier</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                     @endcan
 
                     <!-- OLT -->
@@ -134,22 +160,7 @@
                         </ul>
                     </li>
 
-                    <!-- Barang -->
-                    <!-- Layouts -->
-                    <li class="menu-item {{ request()->is('barang*') ? 'active open' : '' }}">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons ri-layout-2-line"></i>
-                            <div data-i18n="Layouts">Barang</div>
-                        </a>
 
-                        <ul class="menu-sub">
-                            <li class="menu-item {{ request()->is('barang*') ? 'active' : '' }}">
-                                <a href="{{ route('barang.index') }}" class="menu-link">
-                                    <div data-i18n="Without menu">Data Barang & Stok</div>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
 
                     <!-- SLA -->
                     @can('data-master')

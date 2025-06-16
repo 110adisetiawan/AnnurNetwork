@@ -168,7 +168,6 @@
                         </div>
                         <div class="ms-3">
                             <p class="mb-0">Barang</p>
-                            <h5 class="mb-0">{{ $barang }}</h5>
                         </div>
                     </div>
                 </div>
