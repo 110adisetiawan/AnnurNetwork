@@ -15,6 +15,7 @@
                     <th>Nama</th>
                     <th>Alamat</th>
                     <th>No. Telepon</th>
+                    <th>Telegram ID</th>
                     <th>Role</th>
                     <th>Foto</th>
                     <th>Status</th>
@@ -24,7 +25,7 @@
             <tbody>
                 @if($karyawans->count() == 0)
                 <tr>
-                    <td colspan="8" class="text-center">Data tidak ditemukan</td>
+                    <td colspan="9" class="text-center">Data tidak ditemukan</td>
                 </tr>
                 @endif
                 @foreach ($karyawans as $k)
@@ -33,6 +34,7 @@
                     <td>{{ $k->name }}</td>
                     <td>{{ $k->alamat }}</td>
                     <td>{{ $k->no_hp }}</td>
+                    <td>{{ $k->telegram_id }}</td>
                     <td>
                         @foreach ($k->getRoleNames() as $role)
                         <button class="btn btn-success">{{ $role }}</button>

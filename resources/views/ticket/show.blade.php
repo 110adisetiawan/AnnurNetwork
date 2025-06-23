@@ -28,10 +28,12 @@
             </div>
             <div class="mb-6">
                 <div class="mt-4">
+                    @if($ticket->image_address)
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#modalCenter">
                         <span class="ri-image-line ri-16px me-1_5"></span>Lihat Foto Lokasi
                     </button>
+                    @endif
                     <a class="btn btn-success waves-effect waves-light mb-2" target="_blank" href="https://www.google.com/maps/place/{{ $ticket->latitude_ticket }},{{ $ticket->longitude_ticket }}">
                         <span class="ri-map-2-line ri-16px me-1_5"></span>Lihat Maps Lokasi
                     </a>

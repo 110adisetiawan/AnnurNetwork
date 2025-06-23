@@ -52,6 +52,12 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating form-floating-outline">
+                            <input class="form-control" type="text" id="firstName" name="telegram_id" value="{{ $karyawan->telegram_id }}" autofocus="">
+                            <label for="firstName">Telegram Chat ID</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating form-floating-outline">
                             <input class="form-control" type="text" id="email" name="email" value="{{ $karyawan->email }}" placeholder="john.doe@example.com">
                             <label for="email">E-mail</label>
                         </div>

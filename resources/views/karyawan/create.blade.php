@@ -34,6 +34,13 @@
                     <input type="text" class="form-control" id="basic-default-fullname" placeholder="081234567890" name="no_hp" value="{{ @old('no_hp') }}">
                     <label for="basic-default-fullname">No. Handphone</label>
                 </div>
+                @error('telegram_id')
+                <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
+                <div class="form-floating form-floating-outline mb-6">
+                    <input type="text" class="form-control" id="basic-default-fullname" placeholder="masukkan chat id telegram" name="telegram_id" value="{{ @old('no_hp') }}">
+                    <label for="basic-default-fullname">Chat ID Telegram</label>
+                </div>
                 @error('foto')
                 <div class="alert alert-danger">{{ $message }}</div>
                 @enderror

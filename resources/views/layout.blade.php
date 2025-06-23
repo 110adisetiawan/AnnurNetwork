@@ -45,6 +45,8 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
+    {{-- sweetalert2  --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- LeafletJS  --}}
     @stack('custom-scripts-map')
 
@@ -112,24 +114,24 @@
                     </li>
                     <!-- Barang Master -->
                     <!-- Layouts -->
-                    <li class="menu-item  {{ request()->is('product*','category*','supplier*') ? 'active open' : '' }}">
+                    <li class="menu-item  {{ request()->is('product*','product_category*','product_supplier*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-id-card-line"></i>
                             <div data-i18n="Layouts">Barang</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item {{ request()->is('product*') ? 'active' : '' }}">
+                            <li class="menu-item {{ request()->is('products*') ? 'active' : '' }}">
                                 <a href="{{ route('products.index') }}" class="menu-link">
                                     <div>Data Barang</div>
                                 </a>
                             </li>
-                            <li class="menu-item menu-item {{ request()->is('category*') ? 'active' : '' }}">
+                            <li class="menu-item menu-item {{ request()->is('product_categories*') ? 'active' : '' }}">
                                 <a href="{{ route('product_categories.index') }}" class="menu-link">
                                     <div data-i18n="Without navbar">Kategori Barang</div>
                                 </a>
                             </li>
-                            <li class="menu-item {{ request()->is('supplier*') ? 'active' : '' }}">
+                            <li class="menu-item {{ request()->is('product_supplier*') ? 'active' : '' }}">
                                 <a href="{{ route('product_suppliers.index') }}" class="menu-link">
                                     <div data-i18n="Container">Supplier</div>
                                 </a>
@@ -196,13 +198,8 @@
 
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
-                                    <div data-i18n="Without menu">Input Barang Masuk</div>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a href="layouts-without-navbar.html" class="menu-link">
-                                    <div data-i18n="Without navbar">Input Barang Keluar</div>
+                                <a href="{{ route('product_stock_movements.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">Transaksi Barang</div>
                                 </a>
                             </li>
                             <li class="menu-item">

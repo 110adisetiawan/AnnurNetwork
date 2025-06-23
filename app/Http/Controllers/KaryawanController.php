@@ -45,6 +45,7 @@ class KaryawanController extends Controller
             'no_hp' => 'required',
             'email' => 'required|email|unique:karyawans',
             'password' => 'required',
+            'telegram_id' => 'required',
             'foto' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'foto.image' => 'File harus berupa gambar!',
@@ -58,6 +59,7 @@ class KaryawanController extends Controller
         $insert->alamat = $request->alamat;
         $insert->no_hp = $request->no_hp;
         $insert->email = $request->email;
+        $insert->telegram_id = $request->telegram_id;
         $insert->password = Hash::make($request->password);
 
         if ($request->hasFile('foto')) {
@@ -87,13 +89,6 @@ class KaryawanController extends Controller
         return view('karyawan.edit', compact('karyawan', 'roles'));
     }
 
-    public function editPassword(string $id)
-    {
-
-        $karyawan = User::find($id);
-        return view('karyawan.editPassword', compact('karyawan'));
-    }
-
     /**
      * Update the specified resource in storage.
      */
@@ -103,6 +98,7 @@ class KaryawanController extends Controller
             'nama' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
+            'telegram_id' => 'required',
             'email' => 'required|email|unique:karyawans,email,' . $karyawan->id,
             'foto' => 'image|mimes:jpeg,png,jpg,gif,bmp|max:2048',
             'status' => 'required',
@@ -118,6 +114,7 @@ class KaryawanController extends Controller
         $update->name = $request->nama;
         $update->alamat = $request->alamat;
         $update->no_hp = $request->no_hp;
+        $update->telegram_id = $request->telegram_id;
         $update->email = $request->email;
         $update->status = $request->status;
 

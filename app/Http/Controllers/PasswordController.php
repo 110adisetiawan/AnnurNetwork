@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -47,7 +48,7 @@ class PasswordController extends Controller
      */
     public function edit(string $id)
     {
-        $karyawan = Karyawan::find($id);
+        $karyawan = User::find($id);
         return view('karyawan.editPassword', compact('karyawan'));
     }
 

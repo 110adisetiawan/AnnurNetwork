@@ -11,8 +11,10 @@ class ProductController extends Controller
 {
     public function index()
     {
+        $category = Product_Category::all();
+        $supplier = Product_Supplier::all();
         $products = Product::with(['product_category', 'product_supplier'])->get();
-        return view('product.index', compact('products'));
+        return view('product.index', compact('products', 'category', 'supplier'));
     }
 
     public function create()
@@ -45,18 +47,20 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        return view('product.edit', compact('product'));
+        $category = Product_Category::all();
+        $supplier = Product_Supplier::all();
+        return view('product.edit', compact('product', 'category', 'supplier'));
     }
 
     public function update(Request $request, Product $product)
     {
         $product->update($request->all());
-        return redirect()->route('product.index')->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('product.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
     }
 }

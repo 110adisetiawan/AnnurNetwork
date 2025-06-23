@@ -41,15 +41,17 @@
                     <input type="text" class="form-control" id="basic-default-fullname" placeholder="" name="" value="{{ $ticket->user->name }}" readonly>
                     <label for="basic-default-fullname">Teknisi</label>
                 </div>
-                @if($ticket->status != 'closed')
-                <button type="button" data-bs-toggle="modal" data-bs-target="#modalCenterUbahTeknisi" class="btn btn-success waves-effect waves-light mb-2 mb-2">Ubah Teknisi</button>
-                @endif
                 <div class="mb-6">
                     <div class="mt-4">
+                        @if($ticket->status != 'closed')
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#modalCenterUbahTeknisi" class="btn btn-success waves-effect waves-light mb-2 mb-2">Ubah Teknisi</button>
+                        @endif
+                        @if($ticket->image_address)
                         <!-- Button trigger modal -->
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#modalCenter">
                             <span class="ri-image-line ri-16px me-1_5"></span>Lihat Foto Lokasi
                         </button>
+                        @endif
                         <a class="btn btn-success waves-effect waves-light mb-2" target="_blank" href="https://www.google.com/maps/place/{{ $ticket->latitude_ticket }},{{ $ticket->longitude_ticket }}">
                             <span class="ri-map-2-line ri-16px me-1_5"></span>Lihat Maps Lokasi
                         </a>
@@ -153,7 +155,7 @@
                                     <select id="country" class="select2 form-select" name="user_id">
                                         <option value="{{ $ticket->user->id }}">{{ $ticket->user->name }}</option>
                                         @foreach ($karyawans as $karyawan)
-                                        <option value="{{ $karyawan->id }}">{{ $karyawan->nama }}</option>
+                                        <option value="{{ $karyawan->id }}">{{ $karyawan->name }}</option>
                                         @endforeach
                                     </select>
                             </div>

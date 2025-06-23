@@ -3,11 +3,21 @@
 @section('content')
 <div class="container">
     <h1>TIKET</h1>
-    @can('ticket-create')
+    @can('data-create')
     <a href="{{ route('ticket.create') }}" class="btn btn-primary mb-5">Tambah Ticket</a>
     @endcan
     @if(session('success'))
-    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+    <script>
+        Swal.fire({
+            icon: 'success'
+            , title: 'Sukses!'
+            , text: '{{ session('success') }}'
+            , timer: 4000
+            , showConfirmButton: false
+        });
+
+    </script>
+
     @endif
     <div class="card">
         <div class="card-body pt-lg-2">
@@ -92,12 +102,31 @@
                                 <div class="dropdown-menu" style="">
                                     <a href="{{ route('ticket.show', $ticket->id) }}" class="dropdown-item waves-effect"><i class="ri-eye-line text-warning me-1"></i> Show</a>
                                     <a href="{{ route('ticket.edit', $ticket->id) }}" class="dropdown-item waves-effect"><i class="ri-pencil-line text-primary me-1"></i> Edit</a>
-                                    @can('ticket-delete')
-                                    <form action="{{ route('ticket.destroy', $ticket->id) }}" method="post" style="display: inline">
+                                    @can('data-delete')
+                                    <form id="delete-form-{{ $ticket->id }}" action="{{ route('ticket.destroy', $ticket->id) }}" method="post" style="display: inline">
                                         @csrf
                                         @method('delete')
-                                        <button type="submit" class="dropdown-item waves-effect"><i class="ri-delete-bin-6-line text-danger me-1"></i> Delete</button>
+                                        <button type="button" onclick="hapusData({{ $ticket->id }})" class="dropdown-item waves-effect"><i class="ri-delete-bin-6-line text-danger me-1"></i> Delete</button>
+                                        <script>
+                                            function hapusData(id) {
+                                                Swal.fire({
+                                                    title: 'Yakin ingin menghapus?'
+                                                    , text: 'Data akan hilang permanen.'
+                                                    , icon: 'warning'
+                                                    , showCancelButton: true
+                                                    , confirmButtonColor: '#d33'
+                                                    , cancelButtonColor: '#3085d6'
+                                                    , confirmButtonText: 'Ya, hapus!'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        document.getElementById('delete-form-' + id).submit();
+                                                    }
+                                                });
+                                            }
+
+                                        </script>
                                     </form>
+
                                     @endcan
                                 </div>
                             </div>

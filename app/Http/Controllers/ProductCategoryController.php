@@ -9,43 +9,43 @@ class ProductCategoryController extends Controller
 {
     public function index()
     {
-        $categories = Product_Category::all();
-        return view('categories.index', compact('categories'));
+        $categories = Product_Category::latest()->paginate(5);
+        return view('product.category.index', compact('categories'));
     }
 
-    public function create()
-    {
-        return view('categories.create');
-    }
+    public function create() {}
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:categories'
+            'name' => 'required|unique:product_categories'
+        ], [
+            'name.required' => 'Insert data gagal, Nama kategori harus diisi.',
+            'name.unique' => 'Insert data gagal, Nama kategori [' . $request->name . '] sudah ada.'
         ]);
 
         Product_Category::create($request->all());
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan.');
+        return redirect()->route('product_categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
-    public function edit(Product_Category $category)
-    {
-        return view('categories.edit', compact('category'));
-    }
+    public function edit(Product_Category $category) {}
 
     public function update(Request $request, Product_Category $category)
     {
         $request->validate([
-            'name' => 'required|unique:categories,name,' . $category->id
+            'name' => 'required|unique:product_categories,name,' . $category->id
         ]);
 
-        $category->update($request->all());
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui.');
+        $update = Product_Category::find($request->id);
+        $update->name = $request->name;
+        $result = $update->save();
+        return redirect()->route('product_categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
-    public function destroy(Product_Category $category)
+    public function destroy(Request $request)
     {
-        $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
+        $delete = Product_Category::find($request->id);
+        $delete->delete();
+        return redirect()->route('product_categories.index')->with('success', 'Kategori [' . $request->name . '] berhasil dihapus.');
     }
 }

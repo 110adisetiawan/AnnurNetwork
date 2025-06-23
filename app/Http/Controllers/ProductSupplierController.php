@@ -9,47 +9,46 @@ class ProductSupplierController extends Controller
 {
     public function index()
     {
-        $suppliers = Product_Supplier::all();
-        return view('suppliers.index', compact('suppliers'));
+        $suppliers = Product_Supplier::latest()->paginate(5);
+        return view('product.supplier.index', compact('suppliers'));
     }
 
-    public function create()
-    {
-        return view('suppliers.create');
-    }
+    public function create() {}
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|unique:suppliers',
+            'name' => 'required|unique:product_suppliers',
             'contact_info' => 'nullable|string',
             'address' => 'nullable|string'
         ]);
 
         Product_Supplier::create($request->all());
-        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil ditambahkan.');
+        return redirect()->route('product_suppliers.index')->with('success', 'Supplier [' . $request->name . '] berhasil ditambahkan.');
     }
 
-    public function edit(Product_Supplier $supplier)
-    {
-        return view('suppliers.edit', compact('supplier'));
-    }
+    public function edit(Product_Supplier $supplier) {}
 
     public function update(Request $request, Product_Supplier $supplier)
     {
         $request->validate([
-            'name' => 'required|unique:suppliers,name,' . $supplier->id,
+            'name' => 'required|unique:product_suppliers,name,' . $supplier->id,
             'contact_info' => 'nullable|string',
             'address' => 'nullable|string'
         ]);
 
-        $supplier->update($request->all());
-        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil diperbarui.');
+        $update = Product_Supplier::find($request->id);
+        $update->name = $request->name;
+        $update->contact_info = $request->contact_info;
+        $update->address = $request->address;
+        $result = $update->save();
+        return redirect()->route('product_suppliers.index')->with('success', 'Supplier berhasil diperbarui.');
     }
 
-    public function destroy(Product_Supplier $supplier)
+    public function destroy(Request $request)
     {
-        $supplier->delete();
-        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil dihapus.');
+        $delete = Product_Supplier::find($request->id);
+        $delete->delete();
+        return redirect()->route('product_suppliers.index')->with('success', 'Supplier [' . $request->name . '] berhasil dihapus.');
     }
 }

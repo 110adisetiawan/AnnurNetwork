@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('product_stock_movements', function (Blueprint $table) {
+            $table->string('custom_id')->unique()->after('id');
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::table('product_stock_movements', function (Blueprint $table) {
+            $table->dropColumn('custom_id');
+        });
     }
 };
