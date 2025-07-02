@@ -29,23 +29,6 @@ use App\Http\Controllers\TicketStatistikController;
 use App\Http\Controllers\ProductStockMovementController;
 
 
-Route::get('/send-message', function () {
-    $chatId = '1678655923'; // Replace with your chat ID
-    $message = 'Hello, this is a message from Laravel!';
-
-    Telegram::sendMessage([
-        'chat_id' => $chatId,
-        'text' => $message,
-    ]);
-
-    return 'Message sent to Telegram!';
-});
-
-Route::get('/get-updates', function () {
-    $updates = Telegram::getUpdates();
-    return $updates;
-});
-
 // Auth::routes();
 
 Route::group(['middleware' => ['guest']], function () {

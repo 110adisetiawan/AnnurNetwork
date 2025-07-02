@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('networks', function (Blueprint $table) {
-            $table->string('status')->after('ip_address')->nullable()->default('active');
+        Schema::create('tasks', function (Blueprint $table) {
+            $table->id(); // bigint unsigned auto-increment
+            $table->string('nama_tugas');
+            $table->timestamps(); // created_at & updated_at, nullable by default
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('networks', function (Blueprint $table) {
-            //
-        });
+        //
     }
 };

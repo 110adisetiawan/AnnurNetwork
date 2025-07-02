@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_reports', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+        Schema::create('absensis', function (Blueprint $table) {
+            $table->id(); // bigint unsigned auto-increment
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_stock_movement_id')->constrained()->onDelete('cascade');
-            $table->dateTime('report_date');
-            $table->text('details')->nullable();
-            $table->timestamps();
+            $table->dateTime('masuk')->nullable();
+            $table->dateTime('pulang')->nullable();
+            $table->enum('keterangan', ['hadir', 'izin', 'sakit', 'alfa'])->default('alfa');
+            $table->timestamps(); // created_at & updated_at
         });
     }
 

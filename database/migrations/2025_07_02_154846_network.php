@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('networks', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // bigint unsigned auto-increment
             $table->string('nama_device');
             $table->string('serial_number');
             $table->string('ip_address');
+            $table->string('status')->default('active');
             $table->string('latitude');
             $table->string('longitude');
-            $table->timestamps();
+            $table->timestamps(); // created_at dan updated_at
         });
     }
 

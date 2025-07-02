@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('SLA', function (Blueprint $table) {
-            $table->id();
+        Schema::create('sla', function (Blueprint $table) {
+            $table->id(); // bigint unsigned auto-increment
             $table->string('nama_sla');
             $table->string('description');
             $table->string('time');
-            $table->timestamps();
+            $table->timestamps(); // created_at & updated_at, nullable by default
         });
     }
 

@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_stock_movements', function (Blueprint $table) {
-            $table->string('custom_id')->unique()->after('id');
+        Schema::create('product_categories', function (Blueprint $table) {
+            $table->id(); // bigint unsigned, auto-increment
+            $table->string('name');
+            $table->timestamps(); // created_at & updated_at
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_stock_movements', function (Blueprint $table) {
-            $table->dropColumn('custom_id');
-        });
+        //
     }
 };

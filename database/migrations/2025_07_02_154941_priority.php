@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_stock_movements', function (Blueprint $table) {
-            $table->date('transaction_date')->after('custom_id');
+        Schema::create('priorities', function (Blueprint $table) {
+            $table->id(); // bigint unsigned primary key auto-increment
+            $table->string('nama_prioritas');
+            $table->timestamps(); // created_at & updated_at nullable
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('product_stock_movements', function (Blueprint $table) {
-            $table->dropColumn('transaction_date');
-        });
+        //
     }
 };

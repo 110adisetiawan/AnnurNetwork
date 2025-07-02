@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // bigint unsigned auto-increment
             $table->string('name');
-            $table->string('sku')->unique();
+            $table->string('sku');
             $table->foreignId('product_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_supplier_id')->constrained()->onDelete('cascade');
             $table->integer('stock')->default(0);
-            $table->decimal('price', 10, 2);
+            $table->string('price')->default('');
             $table->enum('condition', ['normal', 'damaged'])->default('normal');
             $table->text('damage_description')->nullable();
-            $table->timestamps();
+            $table->timestamps(); // created_at & updated_at
         });
     }
 
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        //
     }
 };

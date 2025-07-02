@@ -59,9 +59,9 @@
                     <div class="card-body mt-1">
                         <h4 class="mb-1">Selamat datang di Sistem! 👋🏻</h4>
                         <p class="mb-5">silahkan login dahulu untuk menggunakan sistem</p>
-                        @if(\Session::has('error'))
+                        @if(\Session::has('errors'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ \Session::get('error') }}
+                            {{ $errors->first() }}
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         @endif
@@ -69,8 +69,8 @@
                         <form id="formAuthentication" class="mb-5" action="{{ route('login') }}" method="POST">
                             @csrf
                             <div class="form-floating form-floating-outline mb-5">
-                                <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" autofocus />
-                                <label for="email">Email</label>
+                                <input type="text" class="form-control {{ $errors->has('email') ? 'border border-danger text-danger' : '' }}" id="email" name="email" placeholder="Enter your email" value="{{ old('email') }}" />
+                                <label class="{{ $errors->has('email') ? 'text-danger' : '' }}" for="email">Email</label>
                             </div>
                             <div class="mb-5">
                                 <div class="form-password-toggle">
@@ -110,6 +110,19 @@
     </div>
 
     <!-- / Content -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('email');
+            const label = document.querySelector('label[for="email"]');
+
+            emailInput.addEventListener('input', function() {
+                emailInput.classList.remove('border', 'border-danger', 'text-danger');
+                label.classList.remove('text-danger');
+            });
+        });
+
+    </script>
 
 
 

@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_suppliers', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // bigint unsigned auto-increment primary key
             $table->string('name');
             $table->string('contact_info')->nullable();
             $table->text('address')->nullable();
-            $table->timestamps();
+            $table->timestamps(); // created_at & updated_at, nullable
         });
     }
 

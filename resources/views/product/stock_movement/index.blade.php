@@ -25,9 +25,9 @@
                         <td colspan="8" class="text-center">Data tidak ditemukan</td>
                     </tr>
                     @endif
-                    @foreach ($product_movements as $k)
+                    @foreach ($product_movements as $index => $k)
                     <tr>
-                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ ($product_movements->currentPage() - 1) * $product_movements->perPage() + $index + 1 }}</td>
                         <td>{{ $k->custom_id }}</td>
                         <td>{{ $k->product->name ?? 'Tidak ada barang' }}</td>
                         <td>{{ $k->transaction_date }}</td>
@@ -61,6 +61,7 @@
         </div>
     </div>
 </div>
+{{ $product_movements->links() }}
 
 {{-- Modal Create Form  --}}
 <div class="modal fade" id="modalCenter" tabindex="-1" style="display: none;" aria-hidden="true">
@@ -147,6 +148,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary waves-effect" data-bs-dismiss="modal">
                     Close

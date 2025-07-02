@@ -8,7 +8,6 @@ use App\Models\Ticket;
 use App\Models\Absensi;
 use App\Models\Network;
 use App\Models\Product;
-use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -21,14 +20,14 @@ class DashboardController extends Controller
         $ticket = Ticket::all()->count();
         $tickets = Ticket::all();
         $users = User::all();
+        $users_count = User::all()->count();
         $ticket_users = Ticket::where('user_id', Auth::user()->id);
-        $karyawan = Karyawan::all()->count();
         $barang = Product::all()->count();
         $olt = Network::all()->count();
         $now = Carbon::now()->translatedFormat('l d F Y');
         return view(
             'dashboard',
-            compact('users', 'absensi', 'ticket', 'tickets', 'ticket_users', 'karyawan', 'olt', 'now', 'barang')
+            compact('users', 'users_count', 'absensi', 'ticket', 'tickets', 'ticket_users', 'olt', 'now', 'barang')
         );
     }
 }

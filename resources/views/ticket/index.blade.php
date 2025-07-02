@@ -11,7 +11,8 @@
         Swal.fire({
             icon: 'success'
             , title: 'Sukses!'
-            , text: '{{ session('success') }}'
+            , text: '{{ session('
+            success ') }}'
             , timer: 4000
             , showConfirmButton: false
         });
@@ -60,7 +61,7 @@
                         @endphp
                         >
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $ticket->id }}</td>
+                        <td>{{ $ticket->custom_id }}</td>
                         <td>{{ $ticket->customer_name }}</td>
                         <td>{{ $ticket->user->name }}</td>
                         <td>{{ $ticket->priority->nama_prioritas }}</td>

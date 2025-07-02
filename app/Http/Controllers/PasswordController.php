@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Karyawan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -52,30 +53,47 @@ class PasswordController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        #Match The Old Password
-        $karyawan = User::find($id);
-        if (!Hash::check($request->current_password, $karyawan->password)) {
-            return back()->withErrors(['error' => 'Password lama tidak cocok!']);
+
+        if (Auth::user()->hasRole('Administrator')) {
+
+            $karyawan = User::find($id);
+            # Validation
+            $request->validate([
+                'new_password' => 'required|confirmed',
+            ], [
+                'new_password.required' => 'Harap masukkan password baru!',
+                'new_password.confirmed' => 'Password baru tidak cocok!',
+            ]);
+
+            #Update the new Password
+            $karyawan->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            return redirect()->route('karyawan.edit', $karyawan->id)->with('success', "Password changed successfully!");
+        } else {
+            #Match The Old Password
+            $karyawan = User::find($id);
+            if (!Hash::check($request->current_password, $karyawan->password)) {
+                return back()->withErrors(['error' => 'Password lama tidak cocok!']);
+            }
+            # Validation
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|confirmed',
+            ], [
+                'current_password.required' => 'Harap masukkan password lama!',
+                'new_password.required' => 'Harap masukkan password baru!',
+                'new_password.confirmed' => 'Password baru tidak cocok!',
+            ]);
+
+            #Update the new Password
+            $karyawan->update([
+                'password' => Hash::make($request->new_password)
+            ]);
+
+            return redirect()->route('karyawan.edit', $karyawan->id)->with('success', "Password changed successfully!");
         }
-        # Validation
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|confirmed',
-        ], [
-            'current_password.required' => 'Harap masukkan password lama!',
-            'new_password.required' => 'Harap masukkan password baru!',
-            'new_password.confirmed' => 'Password baru tidak cocok!',
-        ]);
-
-
-
-
-        #Update the new Password
-        $karyawan->update([
-            'password' => Hash::make($request->new_password)
-        ]);
-
-        return redirect()->route('karyawan.edit', $karyawan->id)->with('success', "Password changed successfully!");
     }
 
     /**

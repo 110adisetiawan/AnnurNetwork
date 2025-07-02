@@ -17,7 +17,7 @@ class ProductStockMovementController extends Controller
     {
         $product_movements = Product_StockMovement::with(['product', 'user', 'supplier'])
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
 
         $product = Product::all();
 

@@ -179,7 +179,7 @@
             <div class="d-flex align-items-center justify-content-between">
                 <h5 class="card-title m-0 me-2">Data Master</h5>
             </div>
-            <p class="small mb-0"><span class="h6 mb-0">Total 48.5% Growth</span> 😎 this month</p>
+            <p class="small mb-0"><span class="h6 mb-0"></p>
         </div>
         <div class="card-body pt-lg-10">
             <div class="row g-6">
@@ -192,7 +192,7 @@
                         </div>
                         <div class="ms-3">
                             <p class="mb-0">Karyawan</p>
-                            <h5 class="mb-0">{{ $karyawan }}</h5>
+                            <h5 class="mb-0">{{ $users_count }}</h5>
                         </div>
                     </div>
                 </div>
@@ -247,7 +247,7 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <h5 class="mb-1">Tiket Onprogres</h5>
+                <h5 class="mb-1">Tiket On Progress</h5>
             </div>
         </div>
         <div class="card-body pt-lg-2">
@@ -276,19 +276,27 @@
                         @endif
                         @foreach ($tickets as $ticket)
                         @if($ticket->status == 'onprogress')
-                        <tr>
+                        @php
+                        $slaTime = $ticket->sla?->time ?? 0;
+                        $start = \Carbon\Carbon::parse($ticket->start_date);
+                        $now = \Carbon\Carbon::now();
+
+                        $deadline = $start->copy()->addHours((int)$slaTime);
+                        $selisih = $now->diffAsCarbonInterval($deadline);
+                        $lewatSla = $now->greaterThan($deadline);
+                        @endphp
+                        <tr class="{{ $lewatSla ? 'table-danger' : '' }}">
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $ticket->id }}</td>
+                            <td>{{ $ticket->custom_id }}</td>
                             <td>{{ $ticket->customer_name }}</td>
                             <td>{{ $ticket->user->name }}</td>
                             <td>{{ $ticket->priority->nama_prioritas }}</td>
                             <td>
-                                @if($ticket->status == 'open')
-                                <span class="badge rounded-pill bg-label-success me-1">OPEN</span>
-                                @elseif($ticket->status == 'onprogress')
-                                <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
-                                @else
-                                <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
+                                <span class="badge rounded-pill bg-label-warning me-1">
+                                    ON PROGRESS
+                                </span>
+                                @if ($lewatSla)
+                                <span class="badge rounded-pill bg-label-danger me-1">OVER SLA : {{ $selisih }}</span>
                                 @endif
                             </td>
                             <td>{{ $ticket->created_at }}</td>

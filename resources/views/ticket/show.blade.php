@@ -4,9 +4,11 @@
 <div class="col-md-6">
     <div class="card">
         <div class="card-header">
+            @if(!$ticket->status == 'closed')
             <a href="{{ route('ticket.edit', $ticket->id) }}" class="btn btn-warning waves-effect waves-light float-end" name="status" value="onprogress">
                 Edit Ticket<span class="ri-arrow-drop-right-line ri-25px"></span>
             </a>
+            @endif
             <h3>Detail Ticket</h3>
         </div>
         <div class="card-body">

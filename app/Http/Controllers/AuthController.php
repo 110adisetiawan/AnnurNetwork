@@ -29,7 +29,9 @@ class AuthController extends Controller
             return redirect()->intended('/')->with('success', 'Login Berhasil, Hai ' . Auth::user()->name . '!');
         }
 
-        return redirect()->back()->with('error', 'Email atau Password Salah');
+        return redirect()->back()
+            ->withInput()
+            ->withErrors(['email' => 'Email atau password tidak cocok']);
     }
 
     public function register(Request $request)
