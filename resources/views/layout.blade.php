@@ -35,6 +35,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.1/css/dataTables.jqueryui.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.4/css/responsive.jqueryui.css" />
+    @livewireStyles
+
+
 
 
     <!-- Helpers -->
@@ -44,6 +47,9 @@
     <script src="{{ asset('assets/js/config.js') }}"></script>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    {{-- chart  --}}
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     {{-- sweetalert2  --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -116,7 +122,7 @@
                     <!-- Layouts -->
                     <li class="menu-item  {{ request()->is('product*','product_category*','product_supplier*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
-                            <i class="menu-icon tf-icons ri-id-card-line"></i>
+                            <i class="menu-icon tf-icons ri-layout-2-line"></i>
                             <div data-i18n="Layouts">Barang</div>
                         </a>
 
@@ -222,7 +228,7 @@
 
                         <ul class="menu-sub">
                             <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
+                                <a href="{{ route('absensi.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Absensi</div>
                                 </a>
                             </li>
@@ -256,7 +262,8 @@
                         <span class="menu-header-text">Laporan</span>
                     </li>
                     <!-- Karyawan -->
-                    <!-- Layouts -->
+
+                    <!-- Laporan -->
                     <li class="menu-item">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-cash-line"></i>
@@ -281,17 +288,31 @@
                             </li>
                         </ul>
                     </li>
-                    @endcan
 
                     <li class="menu-item">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ri-layout-2-line"></i>
+                            <div data-i18n="Layouts">Transaksi Barang</div>
+                        </a>
+
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="{{ route('product_reports.index') }}" class="menu-link">
+                                    <div data-i18n="Without menu">Laporan Transaksi Barang</div>
+                                </a>
+                        </ul>
+                    </li>
+                    @endcan
+
+                    <li class="menu-item {{ request()->is('statistik*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-ticket-2-line"></i>
                             <div data-i18n="Layouts">Ticket Karyawan</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
-                                <a href="layouts-without-menu.html" class="menu-link">
+                            <li class="menu-item {{ request()->is('statistik*') ? 'active open' : '' }}">
+                                <a href="{{ route('ticket.statistik') }}" class="menu-link">
                                     <div data-i18n="Without menu">Statistik & SLA</div>
                                 </a>
                             </li>
@@ -324,7 +345,11 @@
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                                        @if(is_null(Auth::user()->foto))
+                                        <img src="{{ asset('assets/img/karyawan/null.png') }}" alt="Avatar" class="w-px-40 h-auto rounded-circle" />
+                                        @else
+                                        <img src="{{ url('/') }}/assets/img/karyawan/{{ Auth::user()->foto }}" alt="Avatar" class="w-px-40 h-auto rounded-circle" />
+                                        @endif
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end mt-3 py-2">
@@ -333,12 +358,18 @@
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-shrink-0 me-2">
                                                     <div class="avatar avatar-online">
-                                                        <img src="{{ asset('assets/img/avatars/1.png') }}" alt class="w-px-40 h-auto rounded-circle" />
+                                                        @if(is_null(Auth::user()->foto))
+                                                        <img src="{{ asset('assets/img/karyawan/null.png') }}" alt="Avatar" class="w-px-40 h-auto rounded-circle" />
+                                                        @else
+                                                        <img src="{{ url('/') }}/assets/img/karyawan/{{ Auth::user()->foto }}" alt="Avatar" class="w-px-40 h-auto rounded-circle" />
+                                                        @endif
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <h6 class="mb-0 small">John Doe</h6>
-                                                    <small class="text-muted">Admin</small>
+                                                    <h6 class="mb-0 small">{{ Auth::user()->name }}</h6>
+                                                    @foreach (Auth::user()->getRoleNames() as $role)
+                                                    <small class="text-muted">{{ $role }}</small>
+                                                    @endforeach
                                                 </div>
                                             </div>
                                         </a>
@@ -372,7 +403,7 @@
                                     </li>
                                     <li>
                                         <div class="d-grid px-4 pt-2 pb-1">
-                                            <a class="btn btn-danger d-flex" href="javascript:void(0);">
+                                            <a class="btn btn-danger d-flex" href="{{ route('logout') }}">
                                                 <small class="align-middle">Logout</small>
                                                 <i class="ri-logout-box-r-line ms-2 ri-16px"></i>
                                             </a>
@@ -410,6 +441,8 @@
         <!-- / Layout wrapper -->
 
 
+        @livewireScripts
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <!-- Core JS -->
         <!-- build:js assets/vendor/js/core.js -->
         <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>

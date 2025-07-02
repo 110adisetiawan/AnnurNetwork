@@ -2,19 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product_Report;
-use App\Models\Product_StockMovement;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Product_Report;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\ProductReportExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Product_StockMovement;
 
 class ProductReportController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function exportPdf(Request $request)
     {
-        $reports = Product_Report::with(['product', 'user', 'stockMovement'])->get();
-        return view('reports.index', compact('reports'));
+        $reports = $this->getFilteredReports($request);
+        $pdf = Pdf::loadView('product.report.export_pdf', compact('reports'));
+        return $pdf->download('laporan_transaksi_barang_' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $filename = 'laporan_transaksi_barang_' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new ProductReportExport($request), $filename);
+    }
+
+    private function getFilteredReports(Request $request)
+    {
+        $query = \App\Models\Product_StockMovement::with('product')->orderBy('transaction_date', 'desc');
+
+        if ($request->filter === 'date' && $request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('transaction_date', [$request->from_date, $request->to_date]);
+        } elseif ($request->filter === 'month') {
+            $month = $request->get('month', now()->month);
+            $year  = $request->get('year', now()->year);
+
+            $query->whereMonth('transaction_date', $month)
+                ->whereYear('transaction_date', $year);
+        }
+
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->product_id);
+        }
+
+        return $query->get();
+    }
+
+
+    public function index(Request $request)
+    {
+        $filterMode = $request->get('filter');
+        $query = Product_StockMovement::with('product')->orderBy('transaction_date', 'desc');
+
+        if ($filterMode === 'date') {
+            if ($request->filled('from_date') && $request->filled('to_date')) {
+                $query->whereBetween('transaction_date', [$request->from_date, $request->to_date]);
+            }
+            if ($request->filled('product_id')) {
+                $query->where('product_id', $request->product_id);
+            }
+        } elseif ($filterMode === 'month') {
+            $month = $request->get('month', now()->month);
+            $year = $request->get('year', now()->year);
+
+            $query->whereMonth('transaction_date', $month)
+                ->whereYear('transaction_date', $year);
+
+            if ($request->filled('product_id')) {
+                $query->where('product_id', $request->product_id);
+            }
+        }
+
+        $products = Product::all();
+        $reports = $query->get();
+
+        return view('product.report.index', compact('reports', 'products'));
     }
 
     public function create()

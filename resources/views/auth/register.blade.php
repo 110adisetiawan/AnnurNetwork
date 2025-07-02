@@ -62,10 +62,22 @@
 
                         <form id="formAuthentication" class="mb-5" action="{{ route('register') }}" method="POST">
                             @csrf
+                            @error('name')
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ $message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            @enderror
                             <div class="form-floating form-floating-outline mb-5">
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" autofocus />
                                 <label for="name">Nama</label>
                             </div>
+                            @error('email')
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ $message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            @enderror
                             <div class="form-floating form-floating-outline mb-5">
                                 <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
                                 <label for="email">Email</label>
@@ -74,6 +86,15 @@
                                 <div class="input-group input-group-merge">
                                     <div class="form-floating form-floating-outline">
                                         <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                                        <label for="password">Password</label>
+                                    </div>
+                                    <span class="input-group-text cursor-pointer"><i class="ri-eye-off-line ri-20px"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-5 form-password-toggle">
+                                <div class="input-group input-group-merge">
+                                    <div class="form-floating form-floating-outline">
+                                        <input type="password" id="password" class="form-control" name="password_confirmation" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                                         <label for="password">Password</label>
                                     </div>
                                     <span class="input-group-text cursor-pointer"><i class="ri-eye-off-line ri-20px"></i></span>

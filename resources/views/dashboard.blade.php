@@ -15,12 +15,35 @@
 
 </script>
 @endpush
+@include('components.toast-validation-errors')
+@include('components.toast-validation-success')
 
+@if(Auth::user()->telegram_id == null)
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'info'
+            , title: 'Lengkapi Profil'
+            , html: 'Kamu belum menambahkan Telegram ID.<br>Silahkan update data kamu'
+            , showCancelButton: false
+            , confirmButtonText: 'Update Data'
+            , allowOutsideClick: false
+
+        , }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ url('karyawan/' . auth()->id() . '/edit') }}";
+            }
+        });
+    });
+
+</script>
 <!-- Congratulations card -->
+@elseif (Auth::user()->hasRole('Karyawan'))
 <div class="col-md-12 col-lg-4">
     <div class="card">
         <div class="card-body text-nowrap">
-            <h5 class="card-title mb-0 flex-wrap text-nowrap">Selamat <label id="greeting"></label> {{ Auth::user()->name }}!</h5>
+            <h5 class="card-title mb-0 flex-wrap text-nowrap"><span id="greeting"></span> {{ Auth::user()->name }}!</h5>
             <p class="mb-2">Selamat datang di sistem</p>
             <h1 class="text-primary mb-0"><label class="mb-8 mt-3" id="time"></label></h1>
             <p class="small mb-0"><span class="h6 mb-0" id="date">{{ $now }}</span></p>
@@ -30,7 +53,7 @@
 </div>
 
 <!--/ Congratulations card -->
-@if (Auth::user()->hasRole('Karyawan'))
+
 <div class="col-md-12 col-lg-4">
     <div class="card">
         <div class="card-body text-nowrap">
@@ -87,54 +110,68 @@
             </div>
         </div>
         <div class="card-body pt-lg-2">
-            <table class="table table-hover" @if($tickets->isEmpty()) "" @else id="myTable" @endif>
-                <thead>
-                    <tr>
-                        <th width=10px>No</th>
-                        <th>Ticket ID</th>
-                        <th>Customer</th>
-                        <th>Teknisi</th>
-                        <th>Urgensi</th>
-                        <th>Status</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if($tickets->isEmpty())
-                    <tr>
-                        <td colspan="8" class="text-center">Tidak ada tiket</td>
-                    </tr>
-                    @endif
-                    @foreach ($tickets as $ticket)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $ticket->id }}</td>
-                        <td>{{ $ticket->customer_name }}</td>
-                        <td>{{ $ticket->user->name }}</td>
-                        <td>{{ $ticket->priority->nama_prioritas }}</td>
-                        <td>
-                            @if($ticket->status == 'open')
-                            <span class="badge rounded-pill bg-label-success me-1">OPEN</span>
-                            @elseif($ticket->status == 'onprogress')
-                            <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
-                            @else
-                            <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
-                            @endif
-                        </td>
-                        <td>{{ $ticket->created_at }}</td>
-                        <td>
-                            <a href="{{ url('/ticket/' . $ticket->id) }}" class="btn btn-warning">Lihat Tiket</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+            <div class="table-responsive">
+                <table class="table table-hover" @if($tickets->where('user_id', Auth::user()->id)->isEmpty()) "" @else id="myTable" @endif>
+            </div>
+            <thead>
+                <tr>
+                    <th width=10px>No</th>
+                    <th>Ticket ID</th>
+                    <th>Customer</th>
+                    <th>Teknisi</th>
+                    <th>Urgensi</th>
+                    <th>Status</th>
+                    <th>Tanggal Dibuat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if($tickets->where('user_id', Auth::user()->id)->isEmpty())
+                <tr>
+                    <td colspan="8" class="text-center">Tidak ada tiket</td>
+                </tr>
+                @endif
+                @foreach ($tickets->where('user_id', Auth::user()->id) as $ticket)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $ticket->id }}</td>
+                    <td>{{ $ticket->customer_name }}</td>
+                    <td>{{ $ticket->user->name }}</td>
+                    <td>{{ $ticket->priority->nama_prioritas }}</td>
+                    <td>
+                        @if($ticket->status == 'open')
+                        <span class="badge rounded-pill bg-label-success me-1">OPEN</span>
+                        @elseif($ticket->status == 'onprogress')
+                        <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
+                        @else
+                        <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
+                        @endif
+                    </td>
+                    <td>{{ $ticket->created_at }}</td>
+                    <td>
+                        <a href="{{ url('/ticket/' . $ticket->id) }}" class="btn btn-warning">Lihat Tiket</a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
             </table>
         </div>
     </div>
 </div>
 @else
 
+<!-- Administrator card -->
+<div class="col-md-12 col-lg-4">
+    <div class="card">
+        <div class="card-body text-nowrap">
+            <h5 class="card-title mb-0 flex-wrap text-nowrap"><span id="greeting"></span> {{ Auth::user()->name }}!</h5>
+            <p class="mb-2">Selamat datang di sistem</p>
+            <h1 class="text-primary mb-0"><label class="mb-8 mt-3" id="time"></label></h1>
+            <p class="small mb-0"><span class="h6 mb-0" id="date">{{ $now }}</span></p>
+        </div>
+        <img src="{{ asset('assets/img/illustrations/tree.png') }}" class="position-absolute bottom-0 end-0 me-3 mb-1" style="" width="80" alt="view sales" />
+    </div>
+</div>
 <!-- Transactions -->
 <div class="col-lg-8">
     <div class="card h-100">
@@ -168,6 +205,7 @@
                         </div>
                         <div class="ms-3">
                             <p class="mb-0">Barang</p>
+                            <h5 class="mb-0">{{ $barang }}</h5>
                         </div>
                     </div>
                 </div>
@@ -213,49 +251,54 @@
             </div>
         </div>
         <div class="card-body pt-lg-2">
-            <table class="table table-hover" @if($tickets->where('status', 'onprogress')->isEmpty()) @else id="myTable" @endif>
-                <thead>
-                    <tr>
-                        <th width=10px>No</th>
-                        <th>Ticket ID</th>
-                        <th>Customer</th>
-                        <th>Teknisi</th>
-                        <th>Urgensi</th>
-                        <th>Status</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Onprogress</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if($tickets->where('status', 'onprogress')->isEmpty())
-                    <tr>
-                        <td colspan="8" class="text-center">Tidak ada tiket onprogress</td>
-                    </tr>
-                    @endif
-                    @foreach ($tickets as $ticket)
-                    @if($ticket->status == 'onprogress')
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $ticket->id }}</td>
-                        <td>{{ $ticket->customer_name }}</td>
-                        <td>{{ $ticket->karyawan->nama }}</td>
-                        <td>{{ $ticket->priority->nama_prioritas }}</td>
-                        <td>
-                            @if($ticket->status == 'open')
-                            <span class="badge rounded-pill bg-label-success me-1">OPEN</span>
-                            @elseif($ticket->status == 'onprogress')
-                            <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
-                            @else
-                            <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
-                            @endif
-                        </td>
-                        <td>{{ $ticket->created_at }}</td>
-                        <td>{{ $ticket->start_date }}</td>
-                    </tr>
-                    @endif
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                @php
+                $hasOnProgress = $tickets->where('status', 'onprogress')->isNotEmpty();
+                @endphp
+                <table class="table table-hover" {{ $hasOnProgress ? 'id=myTable' : '' }}>
+                    <thead>
+                        <tr>
+                            <th width=10px>No</th>
+                            <th>Ticket ID</th>
+                            <th>Customer</th>
+                            <th>Teknisi</th>
+                            <th>Urgensi</th>
+                            <th>Status</th>
+                            <th>Tanggal Dibuat</th>
+                            <th>Onprogress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if($tickets->where('status', 'onprogress')->isEmpty())
+                        <tr>
+                            <td colspan="8" class="text-center">Tidak ada tiket onprogress</td>
+                        </tr>
+                        @endif
+                        @foreach ($tickets as $ticket)
+                        @if($ticket->status == 'onprogress')
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $ticket->id }}</td>
+                            <td>{{ $ticket->customer_name }}</td>
+                            <td>{{ $ticket->user->name }}</td>
+                            <td>{{ $ticket->priority->nama_prioritas }}</td>
+                            <td>
+                                @if($ticket->status == 'open')
+                                <span class="badge rounded-pill bg-label-success me-1">OPEN</span>
+                                @elseif($ticket->status == 'onprogress')
+                                <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
+                                @else
+                                <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
+                                @endif
+                            </td>
+                            <td>{{ $ticket->created_at }}</td>
+                            <td>{{ $ticket->start_date }}</td>
+                        </tr>
+                        @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -275,174 +318,45 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($users as $user)
                     <tr>
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
+                                    @if(is_null($user->foto))
+                                    <img src="{{ asset('assets/img/karyawan/null.png') }}" alt="Avatar" class="rounded-circle" />
+                                    @else
+                                    <img src="{{ url('/') }}/assets/img/karyawan/{{ $user->foto }}" alt="Avatar" class="rounded-circle" />
+                                    @endif
                                 </div>
                                 <div>
-                                    <h6 class="mb-0 text-truncate">Jordan Stevenson</h6>
-                                    <small class="text-truncate">@amiccoo</small>
+                                    <h6 class="mb-0 text-truncate">{{ $user->name }}</h6>
                                 </div>
                             </div>
                         </td>
-                        <td class="text-truncate">susanna.Lind57@gmail.com</td>
+                        <td class="text-truncate">{{ $user->email }}</td>
                         <td class="text-truncate">
                             <div class="d-flex align-items-center">
-                                <i class="ri-vip-crown-line ri-22px text-primary me-2"></i>
-                                <span>Admin</span>
+                                @foreach ($user->getRoleNames() as $role)
+                                @php
+                                if($role == 'Administrator') {
+                                $badgeClass = 'bg-label-primary';
+                                $badgeType = 'ri-vip-crown-line';
+                                $textColor = 'primary';
+                                } elseif($role == 'Karyawan') {
+                                $badgeClass = 'bg-label-success';
+                                $badgeType = 'ri-user-3-line';
+                                $textColor = 'success';
+                                }
+                                @endphp
+                                <i class="{{ $badgeType }} ri-22px text-{{ $textColor }} me-2"></i>
+                                <span>{{ $role }}</span>
+                                @endforeach
                             </div>
                         </td>
-                        <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
+                        <td><span class="badge {{ $badgeClass }} rounded-pill">{{ $user->status }}</span></td>
                     </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Benedetto Rossiter</h6>
-                                    <small class="text-truncate">@brossiter15</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">estelle.Bailey10@gmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-edit-box-line text-warning ri-22px me-2"></i>
-                                <span>Editor</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Bentlee Emblin</h6>
-                                    <small class="text-truncate">@bemblinf</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">milo86@hotmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-computer-line text-danger ri-22px me-2"></i>
-                                <span>Author</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Bertha Biner</h6>
-                                    <small class="text-truncate">@bbinerh</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">lonnie35@hotmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-edit-box-line text-warning ri-22px me-2"></i>
-                                <span>Editor</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Beverlie Krabbe</h6>
-                                    <small class="text-truncate">@bkrabbe1d</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">ahmad_Collins@yahoo.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-pie-chart-2-line ri-22px text-info me-2"></i>
-                                <span>Maintainer</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Bradan Rosebotham</h6>
-                                    <small class="text-truncate">@brosebothamz</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">tillman.Gleason68@hotmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-edit-box-line text-warning ri-22px me-2"></i>
-                                <span>Editor</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-warning rounded-pill">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Bree Kilday</h6>
-                                    <small class="text-truncate">@bkildayr</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">otho21@gmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-user-3-line ri-22px text-success me-2"></i>
-                                <span>Subscriber</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-success rounded-pill">Active</span></td>
-                    </tr>
-                    <tr class="border-transparent">
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar avatar-sm me-4">
-                                    <img src="../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle" />
-                                </div>
-                                <div>
-                                    <h6 class="mb-0 text-truncate">Breena Gallemore</h6>
-                                    <small class="text-truncate">@bgallemore6</small>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-truncate">florencio.Little@hotmail.com</td>
-                        <td class="text-truncate">
-                            <div class="d-flex align-items-center">
-                                <i class="ri-user-3-line ri-22px text-success me-2"></i>
-                                <span>Subscriber</span>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-label-secondary rounded-pill">Inactive</span></td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -453,22 +367,31 @@
 @push('scripts')
 
 <script>
-    var myDate = new Date();
-    var hrs = myDate.getHours();
-    var mins = myDate.getMinutes();
-    var greet;
+    const el = document.getElementById('greeting');
 
-    if (hrs >= 5 && ((hrs == 5 && mins >= 30) || (hrs > 5 && hrs < 12)))
-        greet = 'Pagi';
-    else if (hrs >= 12 && hrs < 18)
-        greet = 'Sore';
-    else if ((hrs >= 18 && hrs < 24) || hrs > 0)
-        greet = 'Malam';
-    else
-        greet = 'Error';
+    const now = new Date();
+    const hrs = now.getHours();
+    const mins = now.getMinutes();
 
-    document.getElementById('greeting').innerHTML =
-        '<b>' + greet;
+    let greet = '';
+    let emoji = '';
+    let english = '';
+
+    if ((hrs == 5 && mins >= 30) || (hrs > 5 && hrs < 12)) {
+        greet = 'Selamat Pagi';
+        english = 'Good Morning';
+        emoji = '🌅';
+    } else if (hrs >= 12 && hrs < 18) {
+        greet = 'Selamat Sore';
+        english = 'Good Afternoon';
+        emoji = '🌇';
+    } else {
+        greet = 'Selamat Malam';
+        english = 'Good Evening';
+        emoji = '🌙';
+    }
+
+    el.innerHTML = `<b>${emoji} ${greet}</b>`;
 
 </script>
 

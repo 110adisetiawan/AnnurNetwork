@@ -5,8 +5,9 @@
     }
 
     #map {
-        width: 1100px;
-        height: 550px;
+        width: 100%;
+        max-width: 100%;
+        height: 60vh;
     }
 
 </style>

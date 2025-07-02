@@ -1,0 +1,13 @@
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+   INFO  No scheduled commands are ready to run.  
+
+
+  2025-06-29 00:05:09 Running ["artisan" sla:cek-telegram] .................................................. 4dt FAIL
+  ⇂ "C:\xampp8x\php\php.exe" "artisan" sla:cek-telegram > "NUL" 2>&1  
+

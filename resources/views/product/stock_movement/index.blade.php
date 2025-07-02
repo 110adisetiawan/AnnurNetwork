@@ -1,79 +1,64 @@
 @extends('../layout')
-
 @section('content')
+@include('components.toast-validation-errors')
+@include('components.toast-validation-success')
 <div class="container">
     <h1>Transaksi Barang</h1>
     <a href="#" class="btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#modalCenter">Tambah Transaksi</a>
-    @if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success'
-            , title: 'Sukses!'
-            , text: '{{ session('success') }}'
-            , timer: 4000
-            , showConfirmButton: false
-        });
-
-    </script>
-
-    @endif
-    @if($errors->any())
-    <div class="alert alert-danger alert-dismissible" role="alert">terjadi kesalahan, silahkan periksa kembali data yang anda masukkan.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    @endif
     <div class="card">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kode Transaksi</th>
-                    <th>Barang</th>
-                    <th>Tanggal</th>
-                    <th>Stok</th>
-                    <th>Kondisi Barang</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if($product_movements->count() == 0)
-                <tr>
-                    <td colspan="8" class="text-center">Data tidak ditemukan</td>
-                </tr>
-                @endif
-                @foreach ($product_movements as $k)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $k->custom_id }}</td>
-                    <td>{{ $k->product->name ?? 'Tidak ada barang' }}</td>
-                    <td>{{ $k->transaction_date }}</td>
-                    <td>{{ $k->quantity }}</td>
-                    <td>
-                    @if($k->damage_status == 'none')
-                        <span class="badge rounded-pill bg-label-success me-1">Normal</span>
-                    @elseif($k->damage_status == 'damaged')
-                        <span class="badge rounded-pill bg-label-danger me-1">Rusak</span>
-                        @endif
-                    </td>
-                    <td>
-                        <div class="dropdown">
-                            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ri-more-2-line"></i>
-                            </button>
-                            <div class="dropdown-menu" style="">
-                                <a href="{{ route('product_stock_movements.edit', $k->id) }}" class="dropdown-item waves-effect"><i class="ri-pencil-line text-warning me-1"></i> Edit</a>
-                                <form action="{{ route('product_stock_movements.destroy', $k->id) }}" method="post" style="display: inline">
-                                    @csrf
-                                    @method('delete')
-                                    <button type="submit" class="dropdown-item waves-effect"><i class="ri-delete-bin-6-line text-danger me-1"></i> Delete</button>
-                                </form>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kode Transaksi</th>
+                        <th>Barang</th>
+                        <th>Tanggal</th>
+                        <th>Stok</th>
+                        <th>Kondisi Barang</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($product_movements->count() == 0)
+                    <tr>
+                        <td colspan="8" class="text-center">Data tidak ditemukan</td>
+                    </tr>
+                    @endif
+                    @foreach ($product_movements as $k)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $k->custom_id }}</td>
+                        <td>{{ $k->product->name ?? 'Tidak ada barang' }}</td>
+                        <td>{{ $k->transaction_date }}</td>
+                        <td>{{ $k->quantity }}</td>
+                        <td>
+                            @if($k->damage_status == 'none')
+                            <span class="badge rounded-pill bg-label-success me-1">Normal</span>
+                            @elseif($k->damage_status == 'damaged')
+                            <span class="badge rounded-pill bg-label-danger me-1">Rusak</span>
+                            @endif
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="ri-more-2-line"></i>
+                                </button>
+                                <div class="dropdown-menu" style="">
+                                    <a href="{{ route('product_stock_movements.edit', $k->id) }}" class="dropdown-item waves-effect"><i class="ri-pencil-line text-warning me-1"></i> Edit</a>
+                                    <form action="{{ route('product_stock_movements.destroy', $k->id) }}" method="post" style="display: inline">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="dropdown-item waves-effect"><i class="ri-delete-bin-6-line text-danger me-1"></i> Delete</button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

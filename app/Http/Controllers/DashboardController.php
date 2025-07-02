@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Ticket;
 use App\Models\Absensi;
 use App\Models\Network;
+use App\Models\Product;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,12 +20,15 @@ class DashboardController extends Controller
         $absensi = Absensi::where('user_id', Auth::user()->id)->whereDate('created_at', Carbon::today())->first();
         $ticket = Ticket::all()->count();
         $tickets = Ticket::all();
+        $users = User::all();
+        $ticket_users = Ticket::where('user_id', Auth::user()->id);
         $karyawan = Karyawan::all()->count();
+        $barang = Product::all()->count();
         $olt = Network::all()->count();
         $now = Carbon::now()->translatedFormat('l d F Y');
         return view(
             'dashboard',
-            compact('absensi', 'ticket', 'tickets', 'karyawan', 'olt', 'now')
+            compact('users', 'absensi', 'ticket', 'tickets', 'ticket_users', 'karyawan', 'olt', 'now', 'barang')
         );
     }
 }

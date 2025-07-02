@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordController extends Controller
 {
-    public function __construct()
-    {
-
-        $this->middleware(['role_or_permission:data-create|data-delete']);
-    }
     /**
      * Display a listing of the resource.
      */
@@ -57,6 +52,11 @@ class PasswordController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        #Match The Old Password
+        $karyawan = User::find($id);
+        if (!Hash::check($request->current_password, $karyawan->password)) {
+            return back()->withErrors(['error' => 'Password lama tidak cocok!']);
+        }
         # Validation
         $request->validate([
             'current_password' => 'required',
@@ -68,11 +68,6 @@ class PasswordController extends Controller
         ]);
 
 
-        #Match The Old Password
-        $karyawan = Karyawan::find($id);
-        if (!Hash::check($request->current_password, $karyawan->password)) {
-            return back()->with('error', "Password lama tidak cocok!");
-        }
 
 
         #Update the new Password
@@ -80,7 +75,7 @@ class PasswordController extends Controller
             'password' => Hash::make($request->new_password)
         ]);
 
-        return redirect()->route('karyawan.index')->with('success', "Password changed successfully!");
+        return redirect()->route('karyawan.edit', $karyawan->id)->with('success', "Password changed successfully!");
     }
 
     /**

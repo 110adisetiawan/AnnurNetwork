@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SLA extends Model
+class Sla extends Model
 {
-    protected $table = 'SLA';
+    protected $table = 'sla';
     protected $fillable = ['nama_sla', 'description', 'time'];
 
     public function tickets()

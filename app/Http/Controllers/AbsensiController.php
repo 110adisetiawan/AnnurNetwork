@@ -3,17 +3,86 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\AbsensiReportExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AbsensiController extends Controller
 {
+
+    public function exportPdf(Request $request)
+    {
+        $absensis = $this->getFilteredReports($request);
+        $pdf = Pdf::loadView('absensi.export_pdf', compact('absensis'));
+        return $pdf->download('absensi_' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $filename = 'absensi_' . now()->format('Y-m-d') . '.xlsx';
+        return Excel::download(new AbsensiReportExport($request), $filename);
+    }
+
+    private function getFilteredReports(Request $request)
+    {
+        $query = Absensi::with('user')->orderBy('created_at', 'desc');
+
+        if ($request->filter === 'date' && $request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('created_at', [$request->from_date, $request->to_date]);
+        } elseif ($request->filter === 'month') {
+            $month = $request->get('month', now()->month);
+            $year  = $request->get('year', now()->year);
+
+            $query->whereMonth('created_at', $month)
+                ->whereYear('created_at', $year);
+        }
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        return $query->get();
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filterMode = $request->get('filter');
+        $query = Absensi::query()->with('user');
+
+        if ($request->filter === 'month') {
+            if ($request->filled('month')) {
+                $query->whereMonth('created_at', $request->month);
+            }
+
+            if ($request->filled('year')) {
+                $query->whereYear('created_at', $request->year);
+            }
+        }
+
+        if ($request->filter === 'date') {
+            if ($request->filled('from_date')) {
+                $query->whereDate('created_at', '>=', $request->from_date);
+            }
+
+            if ($request->filled('to_date')) {
+                $query->whereDate('created_at', '<=', $request->to_date);
+            }
+        }
+
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        $absensis = $query->orderBy('created_at', 'desc')->get();
+        $users = User::all();
+
+        return view('absensi.index', compact('absensis', 'users'));
     }
 
     /**
@@ -78,7 +147,7 @@ class AbsensiController extends Controller
         $time = $carbon->now();
         $update->pulang = $time;
         $result = $update->save();
-        return redirect()->back()->with('success', 'Karyawan berhasil diupdate');
+        return redirect()->back()->with('success', 'Berhasil Absen Pulang');
     }
 
     /**

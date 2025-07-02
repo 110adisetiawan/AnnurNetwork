@@ -1,22 +1,16 @@
 @extends('../layout')
-
 @section('content')
+@include('components.toast-validation-errors')
+@include('components.toast-validation-success')
 
 <div class="container">
     <div class="row">
         <div class="col-12">
-            @if(session('success'))
-            <div class="alert alert-success" role="alert">{{ session('success') }}</div>
-            @endif
-            @if($errors->any())
-            <div class="alert alert-danger alert-dismissible" role="alert">terjadi kesalahan, silahkan periksa kembali data yang anda masukkan.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            @endif
+
             <div class="card mb-6">
-                <h5 class="card-header">Laporan Transaksi Barang</h5>
+                <h5 class="card-header">Laporan Absensi Karyawan</h5>
                 <div class="d-flex gap-2 mb-3 px-6 my-4">
-                    <form action="{{ route('product_reports.export.pdf') }}" method="GET" target="_blank">
+                    <form action="{{ route('absensi.export.pdf') }}" method="GET" target="_blank">
                         @foreach(request()->all() as $key => $value)
                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         <input type="hidden" name="month" value="{{ request('month') }}">
@@ -28,7 +22,7 @@
                         </button>
                     </form>
 
-                    <form action="{{ route('product_reports.export.excel') }}" method="GET">
+                    <form action="{{ route('absensi.export.excel') }}" method="GET" target="_blank">
                         @foreach(request()->except('filter') as $key => $value)
                         <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         <input type="hidden" name="month" value="{{ request('month') }}">
@@ -41,30 +35,30 @@
                     </form>
                 </div>
                 <div class="col-xl-6 col-md-12">
-                    <form method="GET" action="{{ route('product_reports.index') }}" class="px-6 my-4">
+                    <form method="GET" action="{{ route('absensi.index') }}" class="px-6 my-4">
                         <div class="form-floating form-floating-outline mb-2">
-                            <select id="country" name="product_id" class="form-select">
-                                <option value="">-- Semua Produk --</option>
-                                @foreach ($products as $product)
-                                <option value="{{ $product->id }}" {{ request('product_id') == $product->id ? 'selected' : '' }}>
-                                    {{ $product->name }}
+                            <select id="country" name="user_id" class="form-select">
+                                <option value="">-- Semua Karyawan --</option>
+                                @foreach ($users as $user)
+                                <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }}
                                 </option>
                                 @endforeach
                             </select>
-                            <label for="country">Produk</label>
+                            <label for="country">Karyawan</label>
                         </div>
                         @php
-                        $filterAktif = request('month') || request('year') || request('product_id') || request('from_date') || request('to_date');
+                        $filterAktif = request('month') || request('year') || request('user_id') || request('from_date') || request('to_date');
                         @endphp
                         @if ($filterAktif)
-                        <a href="{{ route('product_reports.index') }}" class="btn rounded-pill btn-warning waves-effect waves-light mt-4">
+                        <a href="{{ route('absensi.index') }}" class="btn rounded-pill btn-warning waves-effect waves-light mt-4">
                             <span class="tf-icons ri-search-line ri-16px me-1_5"></span> Reset Filter
                         </a>
                         @endif
                 </div>
                 <div class="row row-bordered g-0">
                     <div class="col-lg-6 p-6">
-                        <form method="GET" action="{{ route('product_reports.index') }}">
+                        <form method="GET" action="{{ route('absensi.index') }}">
                             <small class="text-light fw-medium">Filter by date</small>
                             <div class="demo-inline-spacing">
                                 <div class="form-floating form-floating-outline mb-2">
@@ -126,22 +120,20 @@
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Kode</th>
-                                <th>Produk</th>
-                                <th>Jenis</th>
-                                <th>Jumlah</th>
-                                <th>Kerusakan</th>
+                                <th>Nama Karyawan</th>
+                                <th>Jam Masuk</th>
+                                <th>Jam Keluar</th>
+                                <th>Keterangan</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($reports as $r)
+                            @forelse($absensis as $a)
                             <tr>
-                                <td>{{ $r->transaction_date }}</td>
-                                <td>{{ $r->custom_id }}</td>
-                                <td>{{ $r->product->name }}</td>
-                                <td>{{ ucfirst($r->movement_type) }}</td>
-                                <td>{{ $r->quantity }}</td>
-                                <td>{{ $r->damage_status == 'none' ? 'Normal' : 'Rusak' }}</td>
+                                <td>{{ $a->created_at->isoFormat('dddd, D MMMM Y') }}</td>
+                                <td>{{ $a->user->name }}</td>
+                                <td>{{ $a->masuk->format('H:i:s') }}</td>
+                                <td>{{ $a->pulang->format('H:i:s') }}</td>
+                                <td>{{ $a->keterangan }}</td>
                             </tr>
                             @empty
                             <tr>

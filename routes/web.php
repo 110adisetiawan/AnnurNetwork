@@ -13,6 +13,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TicketController;
+use Telegram\Bot\Laravel\Facades\Telegram;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\ProductController;
@@ -23,9 +24,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductReportController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductSupplierController;
-use App\Http\Controllers\ProductStockMovementController;
 
-use Telegram\Bot\Laravel\Facades\Telegram;
+use App\Http\Controllers\TicketStatistikController;
+use App\Http\Controllers\ProductStockMovementController;
 
 
 Route::get('/send-message', function () {
@@ -50,7 +51,8 @@ Route::get('/get-updates', function () {
 Route::group(['middleware' => ['guest']], function () {
     Route::get('/login', [AuthController::class, 'loadlogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::get('/register', [AuthController::class, 'register'])->name('register');
+    Route::get('/register', [AuthController::class, 'loadregister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
 });
 
 Route::group(['middleware' => ['auth']], function () {
@@ -72,4 +74,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('product_reports', ProductReportController::class);
     Route::resource('product_categories', ProductCategoryController::class);
     Route::resource('product_suppliers', ProductSupplierController::class);
+    Route::get('product-reports/export/pdf', [ProductReportController::class, 'exportPdf'])->name('product_reports.export.pdf');
+    Route::get('product-reports/export/excel', [ProductReportController::class, 'exportExcel'])->name('product_reports.export.excel');
+    Route::get('absensi-reports/export/pdf', [AbsensiController::class, 'exportPdf'])->name('absensi.export.pdf');
+    Route::get('absensi-reports/export/excel', [AbsensiController::class, 'exportExcel'])->name('absensi.export.excel');
+    Route::get('statistik', [TicketStatistikController::class, 'index'])->name('ticket.statistik');
 });

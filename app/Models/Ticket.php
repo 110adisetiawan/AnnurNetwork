@@ -16,7 +16,7 @@ class Ticket extends Model
 
     public function sla()
     {
-        return $this->belongsTo(SLA::class);
+        return $this->belongsTo(Sla::class, 'sla_id');
     }
 
     public function priority()

@@ -4,23 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Permission\Models\Role;
 
 
 class KaryawanController extends Controller
 {
-    public function __construct()
-    {
-
-        $this->middleware(['role_or_permission:data-create|data-delete']);
-    }
     /**
      * Display a listing of the resource.
      */
+
+
     public function index()
     {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user->hasRole('Karyawan')) {
+            return redirect('/');
+        }
         $karyawans = User::all();
         return view('karyawan.index', compact('karyawans'));
     }
@@ -95,7 +98,7 @@ class KaryawanController extends Controller
     public function update(Request $request, User $karyawan)
     {
         $request->validate([
-            'nama' => 'required',
+            'name' => 'required',
             'alamat' => 'required',
             'no_hp' => 'required',
             'telegram_id' => 'required',
@@ -111,7 +114,7 @@ class KaryawanController extends Controller
         $filepath = public_path('assets/img/karyawan');
 
         $update = User::find($karyawan->id);
-        $update->name = $request->nama;
+        $update->name = $request->name;
         $update->alamat = $request->alamat;
         $update->no_hp = $request->no_hp;
         $update->telegram_id = $request->telegram_id;
@@ -133,6 +136,13 @@ class KaryawanController extends Controller
         }
         $update->syncRoles($request->role);
         $result = $update->save();
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user->hasRole('Karyawan')) {
+            return redirect()->route('karyawan.edit', $karyawan->id)->with('success', 'Karyawan berhasil diupdate');
+        }
+
         return redirect()->route('karyawan.index')->with('success', 'Karyawan berhasil diupdate');
     }
 
