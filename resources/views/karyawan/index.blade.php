@@ -36,10 +36,24 @@
                         <td>{{ $k->alamat }}</td>
                         <td>{{ $k->no_hp }}</td>
                         <td>{{ $k->telegram_id }}</td>
-                        <td>
-                            @foreach ($k->getRoleNames() as $role)
-                            <button class="btn btn-success">{{ $role }}</button>
-                            @endforeach
+                        <td class="text-truncate">
+                            <div class="d-flex align-items-center">
+                                @foreach ($k->getRoleNames() as $role)
+                                @php
+                                if($role == 'Administrator') {
+                                $badgeClass = 'bg-label-primary';
+                                $badgeType = 'ri-vip-crown-line';
+                                $textColor = 'primary';
+                                } elseif($role == 'Karyawan') {
+                                $badgeClass = 'bg-label-success';
+                                $badgeType = 'ri-user-3-line';
+                                $textColor = 'success';
+                                }
+                                @endphp
+                                <i class="{{ $badgeType }} ri-22px text-{{ $textColor }} me-2"></i>
+                                <span>{{ $role }}</span>
+                                @endforeach
+                            </div>
                         </td>
                         <td>@if (is_null($k->foto))
                             <img src="{{ asset('assets/img/karyawan/null.png') }}" alt="user-avatar" class="d-block w-px-100 h-px-100 rounded" id="uploadedAvatar">

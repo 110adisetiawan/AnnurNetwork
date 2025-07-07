@@ -45,7 +45,7 @@
                                     <i class="ri-more-2-line"></i>
                                 </button>
                                 <div class="dropdown-menu" style="">
-                                    <a href="{{ route('product_stock_movements.edit', $k->id) }}" class="dropdown-item waves-effect"><i class="ri-pencil-line text-warning me-1"></i> Edit</a>
+                                    <a href="{{ route('product_stock_movements.show', $k->id) }}" class="dropdown-item waves-effect"><i class="ri-eye-line text-primary me-1"></i> Show</a>
                                     <form action="{{ route('product_stock_movements.destroy', $k->id) }}" method="post" style="display: inline">
                                         @csrf
                                         @method('delete')

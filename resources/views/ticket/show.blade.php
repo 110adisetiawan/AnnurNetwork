@@ -4,7 +4,7 @@
 <div class="col-md-6">
     <div class="card">
         <div class="card-header">
-            @if(!$ticket->status == 'closed')
+            @if($ticket->status == 'open' || $ticket->status == 'onprogress')
             <a href="{{ route('ticket.edit', $ticket->id) }}" class="btn btn-warning waves-effect waves-light float-end" name="status" value="onprogress">
                 Edit Ticket<span class="ri-arrow-drop-right-line ri-25px"></span>
             </a>
@@ -64,30 +64,23 @@
     <div class="card">
         <div class="card-body">
             @php
-            $date_start = $ticket->start_date;
-            $date_end = $ticket->end_date;
-            $dateStart = new DateTime($date_start);
-            $dateEnd = new DateTime($date_end);
+            $slaTime = $ticket->sla?->time ?? 0;
+            $start = \Carbon\Carbon::parse($ticket->start_date);
+            $end = \Carbon\Carbon::parse($ticket->end_date);
 
-            $slaDiffHari = $dateStart->diff($dateEnd)->d;
-            $slaDiffJam = $dateStart->diff($dateEnd)->h;
-            $ticket->sla->time;
-            if($slaDiffHari >= 1){
-            echo "<span class='badge rounded-pill bg-label-danger me-1 float-end'>OVER SLA</span>";
-            }else if($slaDiffJam >= $ticket->sla->time){
-            echo "<span class='badge rounded-pill bg-label-danger me-1 float-end'>OVER SLA</span>";
-            }else{
-            echo "<span class='badge rounded-pill bg-label-success me-1 float-end'>MEET SLA</span>";
-            }
+            $deadline = $start->copy()->addHours((int)$slaTime);
+            $selisih = $end->diffAsCarbonInterval($deadline);
+            $lewatSla = $end->greaterThan($deadline);
             @endphp
+            {!! $lewatSla ? "<span class='badge rounded-pill bg-label-danger me-1 float-end'>OVER SLA</span>" : "<span class='badge rounded-pill bg-label-success me-1 float-end'>MEET SLA</span>" !!}
             <h3>On Progress Form</h3>
             <div class="form-floating form-floating-outline mb-6">
                 <input type="text" class="form-control" id="basic-default-fullname" placeholder="" value="{{ $ticket->start_date }}" readonly>
                 <label for="basic-default-fullname">Start Date</label>
             </div>
             <div class="form-floating form-floating-outline mb-6">
-                <input type="text" class="form-control {{ ($slaDiffHari >= 1 || $slaDiffJam >= $ticket->sla->time) ? 'border border-danger text-danger' : 'border border-success text-success' }} " id="basic-default-fullname" placeholder="" value="{{ $ticket->end_date }}" readonly>
-                <label for="basic-default-fullname" class="{{ ($slaDiffHari >= 1 || $slaDiffJam >= $ticket->sla->time) ? 'text-danger' : 'text-success' }}">End Date</label>
+                <input type="text" class="form-control {{ $lewatSla ? 'border border-danger text-danger' : 'border border-success text-success' }} " id="basic-default-fullname" placeholder="" value="{{ $ticket->end_date }} | {{ $selisih }}" readonly>
+                <label for="basic-default-fullname" class="{{ $lewatSla ? 'text-danger' : 'text-success' }}">End Date</label>
             </div>
             <div class="form-floating form-floating-outline mb-6">
                 <input type="text" class="form-control" id="basic-default-fullname" placeholder="" value="{{ $ticket->sla->nama_sla }}" readonly>

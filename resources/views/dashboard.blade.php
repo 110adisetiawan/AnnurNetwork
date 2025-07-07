@@ -1,7 +1,11 @@
 @extends('layout')
 
 @section('content')
-
+@php
+            $absenHariIni = Auth::user()->absensis()->whereDate('masuk', now()->toDateString())->first();
+            $absenKemarin = Auth::user()->absensis()->whereDate('masuk', now()->subDay()->toDateString())->first();
+            $lupaPulang = $absenKemarin && is_null($absenKemarin->pulang);
+            @endphp
 @push('waktuOnload')
 <script type="text/javascript">
     window.setTimeout("waktu()", 1000);
@@ -17,7 +21,7 @@
 @endpush
 @include('components.toast-validation-errors')
 @include('components.toast-validation-success')
-
+@if(Auth::user()->hasRole('Karyawan'))
 @if(Auth::user()->telegram_id == null)
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -36,10 +40,43 @@
             }
         });
     });
+    </script>
 
+    @elseif (!Auth::user()->absensis()->whereDate('masuk', now()->toDateString())->exists())
+    <script>
+    Swal.fire({
+        icon: 'warning',
+        title: 'Belum Absen Hari Ini',
+        text: 'Silakan lakukan absen terlebih dahulu.',
+        confirmButtonText: 'tutup',
+        allowOutsideClick: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // ganti dengan route absen kamu
+        }
+    });
 </script>
-<!-- Congratulations card -->
-@elseif (Auth::user()->hasRole('Karyawan'))
+@endif
+@if ($lupaPulang)
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Lupa Absen Pulang?',
+            html: 'Kamu belum melakukan absen pulang kemarin.<br>Silakan hubungi admin dan jangan diulang lagi!',
+            confirmButtonText: 'Isi Sekarang',
+            allowOutsideClick: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+            }
+        });
+    });
+    </script>
+    @endif
+    @endif
+<!-- User Dashboard -->
+@if (Auth::user()->hasRole('Karyawan'))
 <div class="col-md-12 col-lg-4">
     <div class="card">
         <div class="card-body text-nowrap">
@@ -52,13 +89,15 @@
     </div>
 </div>
 
-<!--/ Congratulations card -->
+<!--/ Absensi card -->
 
 <div class="col-md-12 col-lg-4">
     <div class="card">
         <div class="card-body text-nowrap">
             <h5 class="card-title mb-0 flex-wrap text-nowrap">Absensi Masuk</h5>
-            @if (!$absensi)
+
+
+            @if (!$absenHariIni)
             <p class="mb-2">Silahkan Absen Masuk</p>
             <form action="{{ route('absensi.store') }}" method="post">
                 @csrf
@@ -67,7 +106,7 @@
                 <button type="submit" class="btn btn-success mt-4 mb-4">Absen Masuk</button>
             </form>
             @else
-            <p class="mb-2">Absen Masuk : <br>{{ $absensi->masuk }}</p>
+            <p class="mb-2">Absen Masuk : <br>{{ $absenHariIni->masuk }}</p>
             <button class="btn btn-success mt-4 mb-4" disabled>Sudah absen masuk!</button>
             @endif
         </div>
@@ -79,16 +118,16 @@
     <div class="card">
         <div class="card-body text-nowrap">
             <h5 class="card-title mb-0 flex-wrap text-nowrap">Absensi Pulang</h5>
-            @if ($absensi && !optional($absensi)->pulang)
-            <form action="{{ route('absensi.update', $absensi->id) }}" method="post">
+            @if ($absenHariIni && !optional($absenHariIni)->pulang)
+            <form action="{{ route('absensi.update', $absenHariIni->id) }}" method="post">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="user_id" value="{{ Auth::user()->id; }}">
-                <p class="mb-2">Pastikan pulang <br> sesuai waktu!</p>
+                <p class="mb-2">Pastikan pulang <br> sesuai jam kerja!</p>
                 <button type="submit" class="btn btn-primary mt-4 mb-4">Absen Pulang</button>
             </form>
-            @elseif (optional($absensi)->pulang)
-            <p class="mb-2">Absen Keluar : <br>{{ optional($absensi)->pulang }}</p>
+            @elseif (optional($absenHariIni)->pulang)
+            <p class="mb-2">Absen Keluar : <br>{{ optional($absenHariIni)->pulang }}</p>
             <button class="btn btn-danger mt-4 mb-4" disabled>Sudah Absen Keluar!</button>
 
             @else
@@ -101,7 +140,7 @@
     </div>
 </div>
 
-<!-- Weekly Overview Chart -->
+<!-- Tiket Karyawan -->
 <div class="col-xl-12 col-md-6">
     <div class="card">
         <div class="card-header">
@@ -111,7 +150,7 @@
         </div>
         <div class="card-body pt-lg-2">
             <div class="table-responsive">
-                <table class="table table-hover" @if($tickets->where('user_id', Auth::user()->id)->isEmpty()) "" @else id="myTable" @endif>
+                <table class="table table-hover" @if($tickets->where('status', 'onprogress')->isEmpty()) "" @else id="myTable" @endif>
             </div>
             <thead>
                 <tr>
@@ -126,12 +165,12 @@
                 </tr>
             </thead>
             <tbody>
-                @if($tickets->where('user_id', Auth::user()->id)->isEmpty())
+                @if($tickets->where('status', 'onprogress')->isEmpty())
                 <tr>
-                    <td colspan="8" class="text-center">Tidak ada tiket</td>
+                    <td colspan="8" class="text-center">Belum ada tiket untukmu</td>
                 </tr>
                 @endif
-                @foreach ($tickets->where('user_id', Auth::user()->id) as $ticket)
+                @foreach ($tickets->where('user_id', Auth::user()->id)->where('status', 'onprogress') as $ticket)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $ticket->id }}</td>
@@ -243,7 +282,7 @@
 
 
 <!-- Weekly Overview Chart -->
-<div class="col-xl-12 col-md-6">
+<div class="col-xl-12 col-md-12">
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between">

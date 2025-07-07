@@ -1,6 +1,6 @@
 @extends('../layout')
-
 @section('content')
+
 <div class="container">
     <h1>Data Barang</h1>
     <a href="#" class="btn btn-primary mb-5" data-bs-toggle="modal" data-bs-target="#modalCenter">Tambah Barang</a>

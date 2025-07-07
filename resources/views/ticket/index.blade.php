@@ -43,23 +43,16 @@
                     </tr>
                     @endif
                     @foreach ($tickets as $ticket)
-                    <tr @php if($ticket->status == 'closed'){
-                        $date_start = $ticket->start_date;
-                        $date_end = $ticket->end_date;
-                        $dateStart = new DateTime($date_start);
-                        $dateEnd = new DateTime($date_end);
+                    @php
+                    $slaTime = $ticket->sla?->time ?? 0;
+                    $start = \Carbon\Carbon::parse($ticket->start_date);
+                    $now = \Carbon\Carbon::now();
 
-                        $slaDiffHari = $dateStart->diff($dateEnd)->d;
-                        $slaDiffJam = $dateStart->diff($dateEnd)->h;
-                        $ticket->sla->time;
-                        if($slaDiffHari >= 1){
-                        echo "class='table-danger'";
-                        }else if($slaDiffJam >= $ticket->sla->time){
-                        echo "class='table-danger'";
-                        }
-                        }
-                        @endphp
-                        >
+                    $deadline = $start->copy()->addHours((int)$slaTime);
+                    $selisih = $now->diffAsCarbonInterval($deadline);
+                    $lewatSla = $now->greaterThan($deadline);
+                    @endphp
+                    <tr class="{{ $lewatSla ? 'table-danger' : '' }}">
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $ticket->custom_id }}</td>
                         <td>{{ $ticket->customer_name }}</td>
@@ -72,26 +65,8 @@
                             <span class="badge rounded-pill bg-label-warning me-1">ON PROGRESS</span>
                             @else
                             <span class="badge rounded-pill bg-label-dark me-1">CLOSED</span>
+                            {!! $lewatSla ? "<span class='badge rounded-pill bg-label-danger me-1'>OVER SLA</span>" : "<span class='badge rounded-pill bg-label-success me-1'>MEET SLA</span>"!!}
                             @endif
-                            @php
-                            if($ticket->status == 'closed'){
-                            $date_start = $ticket->start_date;
-                            $date_end = $ticket->end_date;
-                            $dateStart = new DateTime($date_start);
-                            $dateEnd = new DateTime($date_end);
-
-                            $slaDiffHari = $dateStart->diff($dateEnd)->d;
-                            $slaDiffJam = $dateStart->diff($dateEnd)->h;
-                            $ticket->sla->time;
-                            if($slaDiffHari >= 1){
-                            echo "<span class='badge rounded-pill bg-label-danger me-1'>OVER SLA</span>";
-                            }else if($slaDiffJam >= $ticket->sla->time){
-                            echo "<span class='badge rounded-pill bg-label-danger me-1'>OVER SLA</span>";
-                            }else{
-                            echo "<span class='badge rounded-pill bg-label-success me-1'>MEET SLA</span>";
-                            }
-                            }
-                            @endphp
 
                         </td>
                         <td>{{ $ticket->created_at }}</td>

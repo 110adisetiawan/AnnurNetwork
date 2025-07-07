@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class ProductSupplierController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'update', 'destroy']);
+    }
+
     public function index()
     {
         $suppliers = Product_Supplier::latest()->paginate(5);

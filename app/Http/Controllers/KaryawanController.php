@@ -15,6 +15,11 @@ class KaryawanController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit', 'update']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'destroy']);
+    }
 
 
     public function index()
@@ -67,7 +72,7 @@ class KaryawanController extends Controller
 
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move($filepath, $filename);
             $insert->foto = $filename;
         }
@@ -123,7 +128,7 @@ class KaryawanController extends Controller
 
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move($filepath, $filename);
             $update->foto = $filename;
             if (!is_null($karyawan->foto)) {

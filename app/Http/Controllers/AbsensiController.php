@@ -8,6 +8,7 @@ use App\Models\Absensi;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\AbsensiReportExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AbsensiController extends Controller
@@ -54,6 +55,10 @@ class AbsensiController extends Controller
     {
         $filterMode = $request->get('filter');
         $query = Absensi::query()->with('user');
+
+        if (Auth::user()->hasRole('Karyawan')) {
+            $query->where('user_id', Auth::user()->id);
+        }
 
         if ($request->filter === 'month') {
             if ($request->filled('month')) {

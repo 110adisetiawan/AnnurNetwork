@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ProductCategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator']);
+    }
+
     public function index()
     {
         $categories = Product_Category::latest()->paginate(5);

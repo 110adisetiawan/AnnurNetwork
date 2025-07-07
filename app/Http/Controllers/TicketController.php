@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\App_Setting;
 use Carbon\Carbon;
 use App\Models\SLA;
 use App\Models\Task;
@@ -19,8 +20,8 @@ class TicketController extends Controller
 {
     public function __construct()
     {
-
-        $this->middleware(['role_or_permission:data-view']);
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit', 'update']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -75,29 +76,34 @@ class TicketController extends Controller
             'image_address.mimes' => 'File harus berupa gambar dengan format jpeg, png, jpg, gif!',
             'image_address.max' => 'Ukuran file tidak boleh lebih dari 2MB!'
         ]);
-
-        $telegramsend = User::find($request->user_id);
-        $task = Task::find($request->task_id);
-        $sla = SLA::find($request->sla_id);
-        $priority = Priority::find($request->priority_id);
-        $now = Carbon::now()->translatedFormat('l d F Y');
-        $time = Carbon::now()->translatedFormat('g:i:s');
-
         $insert = new Ticket();
 
-        $users = User::role('Administrator')->get();
+        $app_setting = App_Setting::find(1);
+        if ($app_setting->telegram_alert == 'active') {
 
-        $adminMessage = "!ADMIN ALERT NEW TIKET!\n\n====Detail Tiket====\nTanggal : $now \nJam: $time\nNama Teknisi: $telegramsend->name \nNama Pelanggan: $request->customer_name \nAlamat Pelanggan: $request->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
-        $message = "!NEW TIKET!\nhalo $telegramsend->name,\nAnda menerima tiket baru\n\n====Detail Tiket====\nTanggal : $now \nJam: $time\nNama Pelanggan: $request->customer_name \nAlamat Pelanggan: $request->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+            $telegramsend = User::find($request->user_id);
+            $task = Task::find($request->task_id);
+            $sla = SLA::find($request->sla_id);
+            $priority = Priority::find($request->priority_id);
+            $now = Carbon::now()->translatedFormat('l d F Y');
+            $time = Carbon::now()->translatedFormat('g:i:s');
 
-        Telegram::sendMessage([
-            'chat_id' => $users[0]->telegram_id,
-            'text' => $adminMessage,
-        ]);
-        Telegram::sendMessage([
-            'chat_id' => $telegramsend->telegram_id,
-            'text' => $message,
-        ]);
+
+            $users = User::role('Administrator')->get();
+
+            $adminMessage = "!ADMIN ALERT NEW TIKET!\n\n====Detail Tiket====\nTanggal : $now \nJam: $time\nNama Teknisi: $telegramsend->name \nNama Pelanggan: $request->customer_name \nAlamat Pelanggan: $request->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+            $message = "!NEW TIKET!\nhalo $telegramsend->name,\nAnda menerima tiket baru\n\n====Detail Tiket====\nTanggal : $now \nJam: $time\nNama Pelanggan: $request->customer_name \nAlamat Pelanggan: $request->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+
+            Telegram::sendMessage([
+                'chat_id' => $users[0]->telegram_id,
+                'text' => $adminMessage,
+            ]);
+            Telegram::sendMessage([
+                'chat_id' => $telegramsend->telegram_id,
+                'text' => $message,
+            ]);
+        }
+
 
         $filepath = public_path('assets/img/customer');
 
@@ -154,19 +160,24 @@ class TicketController extends Controller
             ], [
                 'user_id.required' => 'Teknisi harus dipilih!'
             ]);
-            $telegramsend = User::find($ticket->user_id);
-            $task = Task::find($ticket->task_id);
-            $sla = SLA::find($ticket->sla_id);
-            $priority = Priority::find($ticket->priority_id);
-            $update = Ticket::find($ticket->id);
+
+            $app_setting = App_Setting::find(1);
+            if ($app_setting->telegram_alert == 'active') {
+
+                $telegramsend = User::find($ticket->user_id);
+                $task = Task::find($ticket->task_id);
+                $sla = SLA::find($ticket->sla_id);
+                $priority = Priority::find($ticket->priority_id);
+                $update = Ticket::find($ticket->id);
+
+                $message = "!NEW TIKET! - *Backup Team*\nhalo $telegramsend->name,\nAnda menerima tiket baru\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTanggal : $ticket->created_at \nNama Pelanggan: $ticket->customer_name \nAlamat Pelanggan: $ticket->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+
+                Telegram::sendMessage([
+                    'chat_id' => $telegramsend->telegram_id,
+                    'text' => $message,
+                ]);
+            }
             $update->user_id = $request->user_id;
-
-            $message = "!NEW TIKET! - *Backup Team*\nhalo $telegramsend->name,\nAnda menerima tiket baru\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTanggal : $ticket->created_at \nNama Pelanggan: $ticket->customer_name \nAlamat Pelanggan: $ticket->customer_address \nTugas: $task->nama_tugas \nSLA: $sla->nama_sla \nPrioritas: $priority->nama_prioritas\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
-
-            Telegram::sendMessage([
-                'chat_id' => $telegramsend->telegram_id,
-                'text' => $message,
-            ]);
 
             $update->save();
             return redirect()->route('ticket.edit', $ticket->id)->with('success', 'Teknisi berhasil diubah.');
@@ -213,21 +224,25 @@ class TicketController extends Controller
             $update->note = $request->note;
             $update->status = 'closed';
 
-            $user = User::find($ticket->user_id);
-            $users = User::role('Administrator')->get();
+            $app_setting = App_Setting::find(1);
+            if ($app_setting->telegram_alert == 'active') {
 
-            $adminMessage = "!ADMIN ALERT CLOSE TIKET!\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTicket Open : $ticket->created_at\nTicket Closed : $time \nClosed By: $user->name\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+                $user = User::find($ticket->user_id);
+                $users = User::role('Administrator')->get();
 
-            $message = "!TIKET CLOSED NOTIFICATION!\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTicket Open : $ticket->created_at\nTicket Closed : $time \nClosed By: $user->name\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+                $adminMessage = "!ADMIN ALERT CLOSE TIKET!\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTicket Open : $ticket->created_at\nTicket Closed : $time \nClosed By: $user->name\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
 
-            Telegram::sendMessage([
-                'chat_id' => $user->telegram_id,
-                'text' => $message,
-            ]);
-            Telegram::sendMessage([
-                'chat_id' => $users[0]->telegram_id,
-                'text' => $adminMessage,
-            ]);
+                $message = "!TIKET CLOSED NOTIFICATION!\n\n====Detail Tiket====\nTicket ID: $ticket->id\nTicket Open : $ticket->created_at\nTicket Closed : $time \nClosed By: $user->name\n*********************\nBuka website untuk melihat detail tiket: https://annurnetwork.com/ticket\n\nTerima kasih.";
+
+                Telegram::sendMessage([
+                    'chat_id' => $user->telegram_id,
+                    'text' => $message,
+                ]);
+                Telegram::sendMessage([
+                    'chat_id' => $users[0]->telegram_id,
+                    'text' => $adminMessage,
+                ]);
+            }
 
             $update->save();
             return redirect()->route('ticket.index')->with('success', 'Ticket close successfully.');

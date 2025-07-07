@@ -33,10 +33,20 @@
                             <i class="ri-file-excel-2-line"></i>Export Excel
                         </button>
                     </form>
+
+                    @php
+                    $filterAktif = request('month') || request('year') || request('user_id') || request('from_date') || request('to_date');
+                    @endphp
+                    @if ($filterAktif)
+                    <a href="{{ route('absensi.index') }}" class="btn btn-xs btn-warning">
+                        <span class="tf-icons ri-search-line ri-16px me-1_5"></span> Reset Filter
+                    </a>
+                    @endif
                 </div>
                 <div class="col-xl-6 col-md-12">
                     <form method="GET" action="{{ route('absensi.index') }}" class="px-6 my-4">
                         <div class="form-floating form-floating-outline mb-2">
+                            @if(Auth::user()->hasRole('Administrator'))
                             <select id="country" name="user_id" class="form-select">
                                 <option value="">-- Semua Karyawan --</option>
                                 @foreach ($users as $user)
@@ -46,15 +56,14 @@
                                 @endforeach
                             </select>
                             <label for="country">Karyawan</label>
+                            @else
+                            <div class="form-floating form-floating-outline mb-2">
+                                <input class="form-control" type="hidden" name="user_id" value="{{ Auth::user()->id }}" readonly>
+                                <input class="form-control" type="text" name="" value="{{ Auth::user()->name }}" readonly>
+                                <label for="html5-datetime-local-input">Nama Karyawan</label>
+                            </div>
+                            @endif
                         </div>
-                        @php
-                        $filterAktif = request('month') || request('year') || request('user_id') || request('from_date') || request('to_date');
-                        @endphp
-                        @if ($filterAktif)
-                        <a href="{{ route('absensi.index') }}" class="btn rounded-pill btn-warning waves-effect waves-light mt-4">
-                            <span class="tf-icons ri-search-line ri-16px me-1_5"></span> Reset Filter
-                        </a>
-                        @endif
                 </div>
                 <div class="row row-bordered g-0">
                     <div class="col-lg-6 p-6">
@@ -132,7 +141,7 @@
                                 <td>{{ $a->created_at->isoFormat('dddd, D MMMM Y') }}</td>
                                 <td>{{ $a->user->name }}</td>
                                 <td>{{ $a->masuk->format('H:i:s') }}</td>
-                                <td>{{ $a->pulang->format('H:i:s') }}</td>
+                                <td>{{ $a->pulang?->format('H:i:s') }}</td>
                                 <td>{{ $a->keterangan }}</td>
                             </tr>
                             @empty

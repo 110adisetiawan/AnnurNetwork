@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Pagination\Paginator;
-
+use App\Models\App_Setting;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        view()->composer('*', function ($view) {
+            $view->with('app_setting', App_Setting::find(1));
+        });
 
         Paginator::useBootstrapFive();
         Blade::directive('currency', function ($expression) {

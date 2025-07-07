@@ -21,10 +21,11 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\ProductReportController;
 use App\Http\Controllers\ProductCategoryController;
-use App\Http\Controllers\ProductSupplierController;
 
+use App\Http\Controllers\ProductSupplierController;
 use App\Http\Controllers\TicketStatistikController;
 use App\Http\Controllers\ProductStockMovementController;
 
@@ -43,6 +44,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('network', NetworkController::class);
+    Route::post('/networks/{network}/ping', [NetworkController::class, 'ping'])->name('networks.ping');
     Route::resource('karyawan', KaryawanController::class);
     Route::resource('password', PasswordController::class);
     Route::resource('task', TaskController::class);
@@ -57,6 +59,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('product_reports', ProductReportController::class);
     Route::resource('product_categories', ProductCategoryController::class);
     Route::resource('product_suppliers', ProductSupplierController::class);
+    Route::resource('app_setting', AppSettingController::class);
     Route::get('product-reports/export/pdf', [ProductReportController::class, 'exportPdf'])->name('product_reports.export.pdf');
     Route::get('product-reports/export/excel', [ProductReportController::class, 'exportExcel'])->name('product_reports.export.excel');
     Route::get('absensi-reports/export/pdf', [AbsensiController::class, 'exportPdf'])->name('absensi.export.pdf');

@@ -26,7 +26,7 @@ class Product_StockMovement extends Model
                 $prefix = 'B';
             }
 
-            $date = Carbon::parse($movement->transaction_date)->format('Ymd');
+            $date = Carbon::parse($movement->transaction_date)->format('dmY');
 
             // Hitung berapa banyak transaksi dengan tipe & tanggal yang sama
             $countToday = self::whereDate('created_at', now())

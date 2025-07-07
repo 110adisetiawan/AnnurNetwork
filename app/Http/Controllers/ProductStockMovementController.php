@@ -10,6 +10,10 @@ use App\Models\Product_StockMovement;
 class ProductStockMovementController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator'])->only(['destroy']);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -61,9 +65,9 @@ class ProductStockMovementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product_StockMovement $product_StockMovement)
+    public function show(Product_StockMovement $product_stock_movement)
     {
-        //
+        return view('product.stock_movement.show', compact('product_stock_movement'));
     }
 
     /**

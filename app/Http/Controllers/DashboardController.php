@@ -16,7 +16,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $absensi = Absensi::where('user_id', Auth::user()->id)->whereDate('created_at', Carbon::today())->first();
         $ticket = Ticket::all()->count();
         $tickets = Ticket::all();
         $users = User::all();
@@ -27,7 +26,7 @@ class DashboardController extends Controller
         $now = Carbon::now()->translatedFormat('l d F Y');
         return view(
             'dashboard',
-            compact('users', 'users_count', 'absensi', 'ticket', 'tickets', 'ticket_users', 'olt', 'now', 'barang')
+            compact('users', 'users_count', 'ticket', 'tickets', 'ticket_users', 'olt', 'now', 'barang')
         );
     }
 }

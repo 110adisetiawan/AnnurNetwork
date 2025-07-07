@@ -10,8 +10,8 @@ class NetworkController extends Controller
 {
     public function __construct()
     {
-
-        $this->middleware(['role_or_permission:data-edit']);
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'update', 'destroy']);
     }
     /**
      * Display a listing of the resource.
@@ -22,14 +22,32 @@ class NetworkController extends Controller
         return view('network.index', compact('networks'));
     }
 
+    public function ping(Network $network)
+    {
+        $ip = $network->ip_address;
+
+        $ping = shell_exec(PHP_OS_FAMILY === 'Windows'
+            ? "ping -n 1 -w 1000 $ip"
+            : "ping -c 1 -W 1 $ip");
+
+        $isOnline = str_contains($ping, 'TTL') || str_contains($ping, 'ttl');
+
+        $network->status = $isOnline ? 'online' : 'offline';
+        $network->save();
+
+        return response()->json([
+            'status' => $network->status,
+            'message' => "{$network->device_name} is " . strtoupper($network->status),
+            'raw' => $ping // ini untuk bantu debug output asli dari ping
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        if ($this->middleware(['role_or_permission:data-create'])) {
-            abort(403, 'Anda tidak punya akses ke halaman ini.');
-        }
+
         return view('network.create');
     }
 
@@ -72,9 +90,7 @@ class NetworkController extends Controller
      */
     public function destroy(Network $network)
     {
-        if ($this->middleware(['role_or_permission:data-delete'])) {
-            abort(403, 'Anda tidak punya akses ke halaman ini.');
-        }
+
         $network->delete();
         return redirect()->route('network.index')->with('success', 'Data device berhasil dihapus');
     }

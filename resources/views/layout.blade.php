@@ -70,7 +70,8 @@
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
                     <a href="/" class="app-brand-link">
-                        <img src="{{ asset('assets/img/dashboard3.png') }}" alt="dashboard" style="max-width: 90%">
+                        {{-- <img src="{{ asset('assets/img/dashboard3.png') }}" alt="dashboard" style="max-width: 90%"> --}}
+                        <img src="{{ url('/') }}/assets/img/app_setting/{{ $app_setting->app_logo }}" alt="dashboard" style="max-width: 90%">
                     </a>
 
                     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -120,14 +121,14 @@
                     </li>
                     <!-- Barang Master -->
                     <!-- Layouts -->
-                    <li class="menu-item  {{ request()->is('product*','product_category*','product_supplier*') ? 'active open' : '' }}">
+                    <li class="menu-item  {{ request()->is('products','product_categories','product_suppliers') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-layout-2-line"></i>
                             <div data-i18n="Layouts">Barang</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item {{ request()->is('products*') ? 'active' : '' }}">
+                            <li class="menu-item {{ request()->is('products') ? 'active' : '' }}">
                                 <a href="{{ route('products.index') }}" class="menu-link">
                                     <div>Data Barang</div>
                                 </a>
@@ -196,14 +197,14 @@
 
                     <!-- Barang -->
                     <!-- Layouts -->
-                    <li class="menu-item">
-                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <li class="menu-item {{ request()->is('product_stock_movements*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle ">
                             <i class="menu-icon tf-icons ri-layout-2-line"></i>
                             <div data-i18n="Layouts">Managemen Barang</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
+                            <li class="menu-item {{ request()->is('product_stock_movements*') ? 'active' : '' }}">
                                 <a href="{{ route('product_stock_movements.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Transaksi Barang</div>
                                 </a>
@@ -220,14 +221,14 @@
 
                     <!-- Karyawan -->
                     <!-- Layouts -->
-                    <li class="menu-item {{ request()->is('ticket*') ? 'active open' : '' }}">
+                    <li class="menu-item {{ request()->is('ticket*','absensi*') ? 'active open' : '' }}">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons ri-id-card-line"></i>
                             <div data-i18n="Layouts">Karyawan</div>
                         </a>
 
                         <ul class="menu-sub">
-                            <li class="menu-item">
+                            <li class="menu-item {{ request()->is('absensi*') ? 'active' : '' }}">
                                 <a href="{{ route('absensi.index') }}" class="menu-link">
                                     <div data-i18n="Without menu">Absensi</div>
                                 </a>
@@ -254,7 +255,7 @@
                     <li class="menu-item">
                         <a href="/" class="menu-link">
                             <i class="menu-icon tf-icons ri-archive-line"></i>
-                            <div data-i18n="Layouts">Dokumentasi & Arsip</div>
+                            <div data-i18n="Layouts">Dokumentasi</div>
                         </a>
                     </li>
 
@@ -333,6 +334,17 @@
                         </a>
                     </div>
 
+
+                    <div class="navbar-nav-right d-flex align-items-start" id="navbar-collapse">
+
+                        <ul class="navbar-nav flex-row align-items-start ms-auto">
+                            <!-- Place this tag where you want the button to render. -->
+                            <li class="nav-item lh-1 me-4">
+                                <h4 class="fs-6 fs-md-5 fs-lg-4 mb-0">{{ $app_setting->app_name }}</h4>
+                            </li>
+
+                        </ul>
+                    </div>
                     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -367,9 +379,8 @@
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <h6 class="mb-0 small">{{ Auth::user()->name }}</h6>
-                                                    @foreach (Auth::user()->getRoleNames() as $role)
-                                                    <small class="text-muted">{{ $role }}</small>
-                                                    @endforeach
+                                                    <small class="text-muted"><em>last login : {{ Auth::user()->last_login_at ? \Carbon\Carbon::parse(Auth::user()->last_login_at)->translatedFormat('d F Y, H:i') : '-' }}
+                                                        </em></small>
                                                 </div>
                                             </div>
                                         </a>
@@ -377,25 +388,18 @@
                                     <li>
                                         <div class="dropdown-divider"></div>
                                     </li>
+                                    @can('data-master')
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="ri-user-3-line ri-22px me-2"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="{{ route('app_setting.index') }}">
                                             <i class="ri-settings-4-line ri-22px me-2"></i>
                                             <span class="align-middle">Settings</span>
                                         </a>
                                     </li>
+                                    @endcan
                                     <li>
-                                        <a class="dropdown-item" href="#">
-                                            <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 ri-file-text-line ri-22px me-3"></i>
-                                                <span class="flex-grow-1 align-middle">Billing</span>
-                                                <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger h-px-20 d-flex align-items-center justify-content-center">4</span>
-                                            </span>
+                                        <a class="dropdown-item" href="{{ route('password.edit',Auth::user()->id) }}">
+                                            <i class="ri-settings-4-line ri-22px me-2"></i>
+                                            <span class="align-middle">Profile</span>
                                         </a>
                                     </li>
                                     <li>

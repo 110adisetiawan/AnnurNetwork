@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit', 'update']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'destroy']);
+    }
     /**
      * Display a listing of the resource.
      */

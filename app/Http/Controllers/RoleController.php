@@ -12,7 +12,7 @@ class RoleController extends Controller
     public function __construct()
     {
 
-        $this->middleware(['role_or_permission:data-create|data-delete']);
+        $this->middleware(['role:Administrator']);
     }
     /**
      * Display a listing of the resource.

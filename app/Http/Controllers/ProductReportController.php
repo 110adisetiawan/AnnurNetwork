@@ -15,6 +15,11 @@ class ProductReportController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator|Karyawan'])->only(['index', 'edit']);
+        $this->middleware(['role:Administrator'])->only(['create', 'store', 'update', 'destroy']);
+    }
 
     public function exportPdf(Request $request)
     {

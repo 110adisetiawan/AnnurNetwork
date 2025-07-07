@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('telegram_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->timestamp('last_login_at')->nullable();
             $table->rememberToken(); // otomatis varchar(100) nullable
             $table->timestamps(); // created_at & updated_at nullable
         });

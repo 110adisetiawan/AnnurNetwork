@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,6 +27,10 @@ class AuthController extends Controller
 
 
         if (Auth::attempt($credentials)) {
+            $user = User::find(Auth::user()->id);
+            $user->last_login_at = now();
+            $user->save();
+
             return redirect()->intended('/')->with('success', 'Login Berhasil, Hai ' . Auth::user()->name . '!');
         }
 

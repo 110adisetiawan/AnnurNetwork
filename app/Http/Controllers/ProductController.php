@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['role:Administrator']);
+    }
+
     public function index()
     {
         $category = Product_Category::all();
